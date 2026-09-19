@@ -51,3 +51,6 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 - M7 benchmark: `pnpm bench` drives seeded synthetic visitors through three arms and writes
   `bench/results/bench.md` and `bench.json`. The committed table is the real output, including
   the places where precog ties the browser.
+- M8 release: README, `docs/how-it-works.md`, `docs/privacy.md`, `docs/decisions.md`, changelog,
+  and a tag-triggered publish workflow with npm provenance. The quickstart was checked by
+  installing the packed tarball into a fresh Nuxt app, which is how two packaging bugs surfaced.

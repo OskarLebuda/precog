@@ -1,6 +1,6 @@
 {
   "name": "nuxt-precog",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
   "keywords": [
     "jev",
@@ -25,6 +25,10 @@
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "prepack": "nuxt-module-build build",
