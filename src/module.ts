@@ -1,4 +1,11 @@
-import { addPlugin, addServerHandler, createResolver, defineNuxtModule } from "@nuxt/kit";
+import {
+  addImports,
+  addPlugin,
+  addServerHandler,
+  addTypeTemplate,
+  createResolver,
+  defineNuxtModule,
+} from "@nuxt/kit";
 import { defu } from "defu";
 import type {
   PrecogBudget,
@@ -42,6 +49,8 @@ export interface ModuleOptions {
   overlay: PrecogOverlay;
   /** Experimental: render internal links as document navigations so prerender fully applies. */
   documentNavigation: boolean;
+  /** Prices for the overlay's cost estimate. Unset means the overlay shows tokens only. */
+  pricing?: { inputPerMillion: number; outputPerMillion: number };
 }
 
 const defaults: ModuleOptions = {
@@ -72,6 +81,7 @@ const defaults: ModuleOptions = {
   },
   overlay: "dev",
   documentNavigation: false,
+  pricing: undefined,
 };
 
 export default defineNuxtModule<ModuleOptions>({
@@ -102,6 +112,7 @@ export default defineNuxtModule<ModuleOptions>({
       privacy: options.privacy,
       overlay,
       documentNavigation: options.documentNavigation,
+      ...(options.pricing ? { pricing: options.pricing } : {}),
     };
 
     nuxt.options.runtimeConfig.public.precog = defu(
@@ -130,6 +141,12 @@ export default defineNuxtModule<ModuleOptions>({
       route: options.endpoint,
       method: "post",
       handler: resolver.resolve("./runtime/server/handlers/predict.post.ts"),
+    });
+
+    addImports({
+      name: "usePrecog",
+      as: "usePrecog",
+      from: resolver.resolve("./runtime/composables/usePrecog.ts"),
     });
 
     addPlugin({ src: resolver.resolve("./runtime/plugin.client.ts"), mode: "client" });

@@ -59,6 +59,8 @@ export interface PrecogPublicOptions {
   privacy: PrecogPrivacy;
   overlay: boolean;
   documentNavigation: boolean;
+  /** Prices for the overlay's cost estimate, in dollars per million tokens. */
+  pricing?: { inputPerMillion: number; outputPerMillion: number };
 }
 
 // --- prediction wire shapes ---

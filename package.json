@@ -57,6 +57,7 @@
     "@types/node": "^24.0.0",
     "@vitest/coverage-v8": "^5.0.1",
     "changelogen": "^0.6.2",
+    "happy-dom": "^20.14.5",
     "nuxt": "^4.5.2",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
