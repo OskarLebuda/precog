@@ -141,7 +141,6 @@ pnpm dev              # playground at localhost:3000, runs without an API key
 pnpm check            # lint, typecheck, unit tests
 pnpm test:e2e         # builds everything and drives real Chrome
 pnpm bench            # writes bench/results/bench.md
-pnpm record           # writes the side-by-side clip to bench/results, 60 fps
 pnpm docs:dev         # the documentation site
 pnpm client:dev       # the DevTools tab on its own, while working on it
 ```

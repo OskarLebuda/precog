@@ -46,7 +46,6 @@
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "release": "pnpm check && pnpm build && changelogen --release && git push --follow-tags",
     "check:treeshake": "node scripts/check-treeshake.mjs",
-    "record": "node scripts/record.mjs",
     "client:build": "nuxt generate client",
     "client:dev": "nuxt dev client --port 3300",
     "docs:dev": "pnpm --filter nuxt-precog-docs dev",

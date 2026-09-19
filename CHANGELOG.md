@@ -22,8 +22,7 @@ First release.
   the module in the page.
 - `takeOverNuxtLinkPrefetch` to replace `NuxtLink`'s blanket viewport prefetch.
 - Experimental `documentNavigation`.
-- A playground that runs without an API key, a benchmark harness, and a recording script that
-  captures at 60 fps with a visible mouse pointer.
+- A playground that runs without an API key, and a benchmark harness.
 - Documentation at <https://oskarlebuda.github.io/nuxt-precog>.
 - Published from GitHub Actions with npm trusted publishing, so there is no token anywhere.
 
