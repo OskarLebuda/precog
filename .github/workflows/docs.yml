@@ -28,11 +28,9 @@ jobs:
       # app from this repo's node_modules, so its build resolves that tsconfig too.
       - run: pnpm exec nuxt-module-build prepare
       - run: pnpm docs:build
-      # `enablement` turns Pages on the first time this runs, so the repository needs no
-      # manual setup. It publishes the site at the `url` in `docs/.config/docs.yaml`.
+      # Pages must already be enabled with "GitHub Actions" as the source. The default
+      # GITHUB_TOKEN cannot create the site itself, so `enablement: true` does not help.
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v4
         with:
           path: docs/.docs/.output/public
