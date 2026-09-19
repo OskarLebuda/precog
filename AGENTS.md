@@ -25,7 +25,10 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 - `src/runtime/server/*`: the Nitro route that talks to Jev through advocaat.
 - `playground/`: demo site used for the recording and for e2e.
 - `bench/`: synthetic-visitor benchmark harness.
-- `docs/decisions.md`: one short entry per decision taken against the plan.
+- `docs/`: the documentation site, built with [undocs](https://github.com/unjs/undocs).
+  `docs/2.reference/3.decisions.md` is the running log of decisions taken against the plan;
+  add an entry there whenever reality differs from what was planned.
+- `client/`: the Nuxt DevTools tab, generated into `dist/client` on publish.
 
 ## Status
 
@@ -52,6 +55,6 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 - M7 benchmark: `pnpm bench` drives seeded synthetic visitors through three arms and writes
   `bench/results/bench.md` and `bench.json`. The committed table is the real output, including
   the places where precog ties the browser.
-- M8 release: README, `docs/how-it-works.md`, `docs/privacy.md`, `docs/decisions.md`, changelog,
-  and a tag-triggered publish workflow with npm provenance. The quickstart was checked by
-  installing the packed tarball into a fresh Nuxt app, which is how two packaging bugs surfaced.
+- M8 release: README, the undocs site under `docs/`, changelog, and a tag-triggered publish
+  workflow. The quickstart was checked by installing the packed tarball into a fresh Nuxt app,
+  which is how two packaging bugs surfaced.

@@ -11,6 +11,8 @@ of the page, so you can watch it guess.
 Not a general prefetcher. `NuxtLink` already prefetches every link that enters the viewport.
 This one tries to prefetch three links instead of thirty, and to start before the hover.
 
+**[Documentation](https://oskarlebuda.github.io/nuxt-precog)**
+
 <!-- Record the hero clip yourself with `pnpm dev:build && pnpm record`. -->
 
 ## Quickstart
@@ -48,8 +50,9 @@ Read [the prerender warning](#prerendering-has-side-effects) before you do.
 ## What it actually buys you
 
 Eight synthetic sessions per arm, six navigations each, real Chrome against a production
-build, throttled to 250 ms latency and 2000 kbit/s. Full method and the raw numbers are in
-[`bench/results/bench.md`](./bench/results/bench.md); reproduce with `pnpm bench`.
+build, throttled to 250 ms latency and 2000 kbit/s. Full method and how to read it are in
+[the benchmark page](https://oskarlebuda.github.io/nuxt-precog/guide/benchmarks); the raw
+numbers are in [`bench/results/bench.md`](./bench/results/bench.md). Reproduce with `pnpm bench`.
 
 | arm                 | off    | native | precog    |
 | ------------------- | ------ | ------ | --------- |
@@ -92,7 +95,7 @@ policy (thresholds, budgets, guards)
   |-> preloadPayload / preloadRouteComponents   for in-app navigations
 ```
 
-The full walk-through is in [`docs/how-it-works.md`](./docs/how-it-works.md). The short version
+The full walk-through is in [the documentation](https://oskarlebuda.github.io/nuxt-precog/guide/how-it-works). The short version
 of the important part: **a `NuxtLink` click is not a document navigation**, so speculation
 rules do nothing for it. That is measured in `e2e/spa-vs-document.spec.ts`. The in-app win
 comes from preloading the payload of the pages the model picked, which only exists for
@@ -223,14 +226,15 @@ This is why `mode` is `'prefetch'` by default, and why `maxPrerender` is 1.
 Experimental. With it on, a click on a link the module prerendered bypasses the client router
 and does a real document navigation, so the browser can hand over the copy it already has.
 Good for content sites that want an MPA feel; it throws away the SPA's state on every click.
-Measured behaviour and its limits are in [`docs/decisions.md`](./docs/decisions.md).
+Measured behaviour and its limits are in
+[the options reference](https://oskarlebuda.github.io/nuxt-precog/reference/options#documentnavigation).
 
 ## Privacy
 
 The module sends page context and part of a browsing path to a third party. It sends no
 identifier of any kind, no full URLs, and never the API key.
-[`docs/privacy.md`](./docs/privacy.md) lists exactly what goes over the wire, the switches that
-narrow it, and how to gate it behind consent.
+[The privacy page](https://oskarlebuda.github.io/nuxt-precog/guide/privacy) lists exactly what
+goes over the wire, the switches that narrow it, and how to gate it behind consent.
 
 ## Development
 
@@ -240,7 +244,9 @@ pnpm dev              # playground at localhost:3000, runs without an API key
 pnpm check            # lint, typecheck, unit tests
 pnpm test:e2e         # builds the playground and drives real Chrome
 pnpm bench            # writes bench/results/bench.md
-pnpm record           # writes the side-by-side clip to bench/results
+pnpm record           # writes the side-by-side clip to bench/results, 60 fps
+pnpm docs:dev         # the documentation site
+pnpm client:dev       # the DevTools tab on its own, while working on it
 ```
 
 The unit suite never touches the network: `test/mock-typesafe.ts` is a small stand-in for the

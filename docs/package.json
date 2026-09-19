@@ -1,0 +1,12 @@
+{
+  "name": "nuxt-precog-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "undocs dev",
+    "build": "undocs build"
+  },
+  "devDependencies": {
+    "undocs": "latest"
+  }
+}

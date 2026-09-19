@@ -3,6 +3,7 @@
 packages:
   - playground
   - bench
+  - docs
 
 # Always use the local module, never the registry.
 overrides:

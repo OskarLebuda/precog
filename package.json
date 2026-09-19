@@ -49,7 +49,9 @@
     "check:treeshake": "node scripts/check-treeshake.mjs",
     "record": "node scripts/record.mjs",
     "client:build": "nuxt generate client",
-    "client:dev": "nuxt dev client --port 3300"
+    "client:dev": "nuxt dev client --port 3300",
+    "docs:dev": "pnpm --filter nuxt-precog-docs dev",
+    "docs:build": "pnpm --filter nuxt-precog-docs build"
   },
   "dependencies": {
     "@nuxt/devtools-kit": "^3.4.2",

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=https://unpkg.com/undocs/schema/config.json
+
+name: "nuxt-precog"
+shortDescription: "Your links, loaded before the click."
+description: "A Nuxt module that asks TypeSafe Jev which link a visitor is about to click, then warms exactly that navigation."
+github: "OskarLebuda/nuxt-precog"
+url: "https://oskarlebuda.github.io/nuxt-precog"
+themeColor: "blue"
+landing:
+  heroCode: "npx nuxt module add nuxt-precog"
+  contributors: true
+  features:
+    - title: "One request, three questions"
+      icon: "i-lucide-brain"
+      description: "Jev answers with a probability for every link on the page, in about 100 ms."
+    - title: "Two effectors"
+      icon: "i-lucide-zap"
+      description: "Speculation rules for document navigations, Nuxt preloading for in-app ones."
+    - title: "Watch it guess"
+      icon: "i-lucide-eye"
+      description: "Probability badges on every link, a HUD, and a Nuxt DevTools tab."
+    - title: "Fails open"
+      icon: "i-lucide-shield"
+      description: "Any error or timeout means the page is left exactly as it was."
+footer:
+  notes:
+    - "Released under the [MIT License](https://github.com/OskarLebuda/nuxt-precog/blob/main/LICENSE)."
