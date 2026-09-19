@@ -2,30 +2,30 @@
   "name": "nuxt-precog",
   "version": "0.0.0",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
-  "license": "MIT",
-  "repository": "olebuda/nuxt-precog",
   "keywords": [
+    "jev",
     "nuxt",
     "nuxt-module",
-    "speculation-rules",
+    "prediction",
     "prefetch",
     "prerender",
-    "prediction",
-    "typesafe",
-    "jev"
+    "speculation-rules",
+    "typesafe"
+  ],
+  "license": "MIT",
+  "repository": "olebuda/nuxt-precog",
+  "files": [
+    "dist"
   ],
   "type": "module",
+  "main": "./dist/module.mjs",
+  "types": "./dist/types.d.mts",
   "exports": {
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     }
   },
-  "main": "./dist/module.mjs",
-  "types": "./dist/types.d.mts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "prepack": "nuxt-module-build build",
     "build": "nuxt-module-build build",
