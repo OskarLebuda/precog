@@ -48,3 +48,6 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 - M6 demo: the playground has a prerendered docs section, a server delay middleware, a control
   panel with the three arms (off, native, precog), and replay of recorded Jev answers so it
   runs without a key. `pnpm record` writes the split-screen clip to `bench/results`.
+- M7 benchmark: `pnpm bench` drives seeded synthetic visitors through three arms and writes
+  `bench/results/bench.md` and `bench.json`. The committed table is the real output, including
+  the places where precog ties the browser.

@@ -9,6 +9,7 @@ coverage
 .DS_Store
 playground/.nuxt
 playground/.output
-bench/results
+bench/results/*
+!bench/results/bench.md
 test-results
 playwright-report

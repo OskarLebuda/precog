@@ -132,3 +132,18 @@ Measured in `e2e/demo.spec.ts`: with the flag on, a click leaves the router out 
 fetches the document itself, reporting `deliveryType: "navigational-prefetch"`. Chrome had not
 finished a prerender in the seconds the test allows, so the flag's promise is "a real document
 navigation that uses whatever the browser already has", not "always instant".
+
+## The benchmark's `off` arm is not "nothing"
+
+The playground turns on `takeOverNuxtLinkPrefetch`, which leaves `NuxtLink` prefetching on
+interaction in every arm. So `off` means "Chrome and Nuxt on their own", a much stronger
+baseline than a site with no prefetching at all. It is also the baseline worth beating, so the
+benchmark keeps it and says so in the table.
+
+## What the benchmark actually shows
+
+Median navigation drops from about 145 ms to about 63 ms, and p95 does not move at all
+(403 ms against 389 ms). Precog helps the common case and does nothing for the tail, which is
+what you would expect: the tail is the navigations the model got wrong. It roughly doubles
+speculative waste, from about 7 kB to about 19 kB per session, and costs around 15 Jev calls
+per session with 18 percent of those answered from the server cache. None of that is hidden.
