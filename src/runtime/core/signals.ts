@@ -3,7 +3,7 @@
  * the DOM and hold a little state.
  */
 
-import type { RawLink } from "./candidates.ts";
+import type { RawLink } from "./candidates";
 
 export interface Point {
   x: number;

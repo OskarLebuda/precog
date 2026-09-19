@@ -5,8 +5,8 @@ import {
   useRouter,
   useRuntimeConfig,
 } from "#app";
-import { Precog } from "./core/orchestrator.ts";
-import type { PrecogPrediction, PrecogPublicOptions } from "./types.ts";
+import { Precog } from "./core/orchestrator";
+import type { PrecogPrediction, PrecogPublicOptions } from "./types";
 
 /** `?precog=off` turns the module off for a side-by-side recording. */
 const OFF = "off";

@@ -1,6 +1,6 @@
 /** Builds the JSON state sent to Jev. Pure: rounds, clamps and applies the privacy options. */
 
-import { toWire } from "./candidates.ts";
+import { toWire } from "./candidates";
 import type {
   PrecogCandidate,
   PrecogDeviceContext,
@@ -9,7 +9,7 @@ import type {
   PrecogPrivacy,
   PrecogSessionContext,
   PrecogState,
-} from "../types.ts";
+} from "../types";
 
 /** Raw, unrounded signals gathered on the client. */
 export interface StateInput {

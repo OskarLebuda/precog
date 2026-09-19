@@ -3,7 +3,7 @@
  * must not bust the key or the endpoint would call Jev on every scroll frame.
  */
 
-import type { PrecogState } from "../../types.ts";
+import type { PrecogState } from "../../types";
 
 /** FNV-1a over the key material. No Node APIs, so it runs on every edge runtime. */
 export function hash(input: string): string {

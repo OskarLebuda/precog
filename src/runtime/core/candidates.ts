@@ -1,7 +1,7 @@
 /** Turns raw links into the capped, deduped candidate list sent to the server. Pure. */
 
-import { isAllowedPath } from "./match.ts";
-import type { PrecogCandidate, PrecogLink } from "../types.ts";
+import { isAllowedPath } from "./match";
+import type { PrecogCandidate, PrecogLink } from "../types";
 
 /** A link as read from the DOM, with nothing the core cannot compute itself. */
 export interface RawLink {

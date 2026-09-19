@@ -8,7 +8,7 @@
 
 import { chance, choice, score } from "advocaat";
 import type { NoulQuestion, ChoiceQuestion, ScoreQuestion } from "advocaat";
-import type { PrecogCandidate, PrecogState } from "../../types.ts";
+import type { PrecogCandidate, PrecogState } from "../../types";
 
 /** The extra option that lets Jev say the visitor clicks nothing. Never a candidate id. */
 export const NONE = "none";

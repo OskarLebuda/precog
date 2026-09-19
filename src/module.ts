@@ -7,7 +7,7 @@ import {
   defineNuxtModule,
 } from "@nuxt/kit";
 import { defu } from "defu";
-import { DEVTOOLS_ROUTE, setupDevtools } from "./devtools.ts";
+import { DEVTOOLS_ROUTE, setupDevtools } from "./devtools";
 import type {
   PrecogBudget,
   PrecogCacheOptions,
@@ -17,12 +17,12 @@ import type {
   PrecogPrivacy,
   PrecogPublicOptions,
   PrecogThresholds,
-} from "./runtime/types.ts";
+} from "./runtime/types";
 
-export type * from "./runtime/types.ts";
-export type { MetricsSummary, Pricing } from "./runtime/core/telemetry.ts";
-export type { PrecogTrigger } from "./runtime/core/orchestrator.ts";
-export type { PredictedHookContext, PredictHookContext } from "./runtime/server/utils/predict.ts";
+export type * from "./runtime/types";
+export type { MetricsSummary, Pricing } from "./runtime/core/telemetry";
+export type { PrecogTrigger } from "./runtime/core/orchestrator";
+export type { PredictedHookContext, PredictHookContext } from "./runtime/server/utils/predict";
 
 export interface ModuleOptions {
   /** Turn the whole module off without removing it. */
@@ -160,27 +160,27 @@ export default defineNuxtModule<ModuleOptions>({
     addServerHandler({
       route: options.endpoint,
       method: "post",
-      handler: resolver.resolve("./runtime/server/handlers/predict.post.ts"),
+      handler: resolver.resolve("./runtime/server/handlers/predict.post"),
     });
 
     addImports({
       name: "usePrecog",
       as: "usePrecog",
-      from: resolver.resolve("./runtime/composables/usePrecog.ts"),
+      from: resolver.resolve("./runtime/composables/usePrecog"),
     });
 
-    addPlugin({ src: resolver.resolve("./runtime/plugin.client.ts"), mode: "client" });
+    addPlugin({ src: resolver.resolve("./runtime/plugin.client"), mode: "client" });
 
     // Registered only when the overlay is on, so a production build never sees the component.
     if (overlay) {
-      addPlugin({ src: resolver.resolve("./runtime/plugin.overlay.client.ts"), mode: "client" });
+      addPlugin({ src: resolver.resolve("./runtime/plugin.overlay.client"), mode: "client" });
     }
 
     if (nuxt.options.dev) {
       addServerHandler({
         route: DEVTOOLS_ROUTE,
         method: "get",
-        handler: resolver.resolve("./runtime/server/handlers/devtools.get.ts"),
+        handler: resolver.resolve("./runtime/server/handlers/devtools.get"),
       });
       setupDevtools(nuxt);
     }

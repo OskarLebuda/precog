@@ -1,9 +1,9 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
 import { createApp, h, shallowRef } from "vue";
 import PrecogOverlay from "./components/PrecogOverlay.vue";
-import type { Precog } from "./core/orchestrator.ts";
-import type { MetricsSummary } from "./core/telemetry.ts";
-import type { PrecogPlan, PrecogPublicOptions } from "./types.ts";
+import type { Precog } from "./core/orchestrator";
+import type { MetricsSummary } from "./core/telemetry";
+import type { PrecogPlan, PrecogPublicOptions } from "./types";
 
 /** Sends decisions to the DevTools tab, which lives in an iframe of its own. */
 const CHANNEL = "precog";

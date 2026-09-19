@@ -1,7 +1,7 @@
 /** Puts a plan into the document: speculation rules, or a prefetch link where they are missing. */
 
-import { serialize } from "./rules.ts";
-import type { PrecogRuleSet } from "../types.ts";
+import { serialize } from "./rules";
+import type { PrecogRuleSet } from "../types";
 
 /** Marks the one script and the links this module owns, so it only ever replaces its own. */
 export const MARKER = "precog";

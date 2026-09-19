@@ -1,4 +1,4 @@
-import type { PredictedHookContext, PredictHookContext } from "./utils/predict.ts";
+import type { PredictedHookContext, PredictHookContext } from "./utils/predict";
 
 declare module "nitropack/types" {
   interface NitroRuntimeHooks {

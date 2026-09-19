@@ -13,3 +13,4 @@ bench/results/*
 !bench/results/bench.md
 test-results
 playwright-report
+*.tgz

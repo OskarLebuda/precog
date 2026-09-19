@@ -1,5 +1,5 @@
 import { useNuxtApp } from "#app";
-import type { Precog } from "../core/orchestrator.ts";
+import type { Precog } from "../core/orchestrator";
 
 export interface UsePrecog {
   /** False while paused, or before consent when `privacy.requireConsent` is on. */

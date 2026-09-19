@@ -1,6 +1,6 @@
-import type { MetricsSummary } from "./core/telemetry.ts";
-import type { Precog, PrecogTrigger } from "./core/orchestrator.ts";
-import type { PrecogPlan } from "./types.ts";
+import type { MetricsSummary } from "./core/telemetry";
+import type { Precog, PrecogTrigger } from "./core/orchestrator";
+import type { PrecogPlan } from "./types";
 
 declare module "#app" {
   interface NuxtApp {

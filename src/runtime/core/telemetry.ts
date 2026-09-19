@@ -1,6 +1,6 @@
 /** Counts what the module did and how well it guessed. In memory, mirrored to sessionStorage. */
 
-import type { PrecogMetrics } from "../types.ts";
+import type { PrecogMetrics } from "../types";
 
 const KEY = "precog:metrics";
 

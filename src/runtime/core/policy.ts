@@ -1,6 +1,6 @@
 /** Turns probabilities into speculative loads. Pure, so every guard and budget is unit tested. */
 
-import { isAllowedPath } from "./match.ts";
+import { isAllowedPath } from "./match";
 import type {
   PrecogBudget,
   PrecogDecision,
@@ -9,7 +9,7 @@ import type {
   PrecogPlan,
   PrecogPrediction,
   PrecogThresholds,
-} from "../types.ts";
+} from "../types";
 
 /** How soon a navigation must look before a prerender is worth its cost. */
 const PRERENDER_SOON = 0.5;

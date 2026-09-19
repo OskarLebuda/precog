@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import type { Precog } from "../core/orchestrator.ts";
-import type { MetricsSummary } from "../core/telemetry.ts";
-import type { PrecogPlan } from "../types.ts";
+import type { Precog } from "../core/orchestrator";
+import type { MetricsSummary } from "../core/telemetry";
+import type { PrecogPlan } from "../types";
 
 const props = defineProps<{
   precog: Precog;

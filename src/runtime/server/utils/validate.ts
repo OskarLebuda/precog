@@ -1,8 +1,8 @@
 /** Rebuilds a trusted state from an untrusted request body. Pure, so every rejection is tested. */
 
-import { isAllowedPath } from "../../core/match.ts";
-import { sanitize } from "./questions.ts";
-import type { PrecogCandidate, PrecogState } from "../../types.ts";
+import { isAllowedPath } from "../../core/match";
+import { sanitize } from "./questions";
+import type { PrecogCandidate, PrecogState } from "../../types";
 
 export interface ValidateOptions {
   maxCandidates: number;

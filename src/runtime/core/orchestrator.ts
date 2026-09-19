@@ -3,10 +3,10 @@
  * Everything it touches outside the DOM is injected, so it can be driven from a test.
  */
 
-import { buildCandidates, fingerprint } from "./candidates.ts";
-import { SpeculationEffector, supportsSpeculationRules as detectSupport } from "./effectors.ts";
-import { canPredict, plan as makePlan } from "./policy.ts";
-import { nativeRuleSet, toRuleSet } from "./rules.ts";
+import { buildCandidates, fingerprint } from "./candidates";
+import { SpeculationEffector, supportsSpeculationRules as detectSupport } from "./effectors";
+import { canPredict, plan as makePlan } from "./policy";
+import { nativeRuleSet, toRuleSet } from "./rules";
 import {
   boxUnder,
   nearestLinks,
@@ -18,16 +18,16 @@ import {
   velocityOf,
   type Box,
   type PointerSample,
-} from "./signals.ts";
-import { buildState } from "./state.ts";
-import { Telemetry, type MetricsSummary, type Pricing } from "./telemetry.ts";
+} from "./signals";
+import { buildState } from "./state";
+import { Telemetry, type MetricsSummary, type Pricing } from "./telemetry";
 import type {
   PrecogLink,
   PrecogPlan,
   PrecogPrediction,
   PrecogPublicOptions,
   PrecogState,
-} from "../types.ts";
+} from "../types";
 
 /** Why a prediction was asked for. Shown in the devtools timeline. */
 export type PrecogTrigger = "route" | "scroll" | "pointer" | "dom" | "manual" | "visible";

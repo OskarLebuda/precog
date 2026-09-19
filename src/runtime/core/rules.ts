@@ -1,6 +1,6 @@
 /** Turns a plan into speculation rules JSON. Pure, snapshot tested. */
 
-import type { PrecogPlan, PrecogRuleSet } from "../types.ts";
+import type { PrecogPlan, PrecogRuleSet } from "../types";
 
 /** Reflected in the `Sec-Speculation-Tags` request header, so these loads can be told apart. */
 export const TAG = "precog";

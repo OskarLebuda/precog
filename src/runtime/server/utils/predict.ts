@@ -5,9 +5,9 @@
 
 import { typesafe } from "advocaat";
 import type { ChoiceAnswer, NoulAnswer, ScoreAnswer } from "advocaat";
-import { cacheKey } from "./cache.ts";
-import { buildQuestions, NONE, SOON_LEVELS } from "./questions.ts";
-import type { PrecogPrediction, PrecogRank, PrecogState } from "../../types.ts";
+import { cacheKey } from "./cache";
+import { buildQuestions, NONE, SOON_LEVELS } from "./questions";
+import type { PrecogPrediction, PrecogRank, PrecogState } from "../../types";
 
 /** What a `precog:predict` listener may read and replace. */
 export interface PredictHookContext {
