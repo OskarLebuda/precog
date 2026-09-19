@@ -15,11 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
+      # No `registry-url`: it makes setup-node write an .npmrc with a placeholder auth token,
+      # and npm then treats that as a credential instead of falling back to the OIDC exchange.
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: pnpm
-          registry-url: https://registry.npmjs.org
       # Trusted publishing needs npm 11.5.1 or newer; Node 24 ships close, so pin it.
       - run: npm install --global npm@latest
       - run: pnpm install --frozen-lockfile
