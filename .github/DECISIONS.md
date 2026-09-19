@@ -199,22 +199,11 @@ in a dev server. Playwright therefore starts both, and the `devtools` project po
 one. `pnpm test:e2e` builds the module and the tab client first, because without `dist/client`
 the tab falls back to proxying a dev server that is not running.
 
-## Publishing uses OIDC, not a token
+## `devEngines.packageManager` had to go
 
-Releases run `npm publish` from GitHub Actions with `id-token: write` and no npm token at all.
-npm verifies the OIDC token against a trusted publisher configured on the package, and attaches
-provenance itself, so `publishConfig.provenance` is gone as well.
-
-`pnpm publish` also speaks OIDC, but only from pnpm 11.1.3 onwards, and this repository is
-pinned to pnpm 10 through `packageManager`. The publish step therefore uses npm, which is the
-path npm documents, with `--ignore-scripts` because the build already ran.
-
-`devEngines.packageManager` had to go: it made npm refuse to run **anything** in this
-repository, including `npm publish` and `npx nuxt build`. `packageManager` states the same
-intent without blocking other tools, and `pnpm/action-setup` reads it.
-
-One thing this cannot do is create the package. A trusted publisher is configured on a package
-that already exists, so the first version of a new name has to be published once by a human.
+It made npm refuse to run **anything** in this repository, including `npm pack` and
+`npx nuxt build playground`. `packageManager` states the same intent without blocking other
+tools, and `pnpm/action-setup` reads it.
 
 ## A listener that throws does not cost a prediction
 

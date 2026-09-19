@@ -159,12 +159,19 @@ first. To work on the tab itself, start `pnpm client:dev` and run the playground
 `PRECOG_DEVTOOLS_LOCAL=1`, which proxies the tab to that dev server instead.
 
 The unit suite never touches the network: `test/mock-typesafe.ts` is a small stand-in for the
-System One API, built from the wire format in
-[advocaat](https://github.com/pithings/advocaat)'s client. The live smoke test is skipped
-unless `TYPESAFE_API_KEY` is set.
+System One API. The live smoke test is skipped unless `TYPESAFE_API_KEY` is set.
 
-Two notes that did not fit on the site: [decisions](./.github/DECISIONS.md), the running log of
-why things are the way they are, and [releasing](./.github/RELEASING.md).
+One note that did not fit on the site: [decisions](./.github/DECISIONS.md), the running log of
+why things are the way they are.
+
+## Thanks
+
+- [TypeSafe](https://typesafe.ai/) for **Jev**. It answers typed questions in about 100 ms,
+  which is the only reason guessing a click before it happens is possible at all. A model that
+  writes text would arrive long after the visitor had already clicked.
+- [advocaat](https://github.com/pithings/advocaat) by [pi0](https://github.com/pi0), the small
+  typed client this talks to Jev through. Its source is also where `test/mock-typesafe.ts` took
+  the wire format from, which is what lets the whole test suite run offline.
 
 ## License
 

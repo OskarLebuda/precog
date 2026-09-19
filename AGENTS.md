@@ -29,7 +29,6 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
   flat guide, no reference section.
 - `.github/DECISIONS.md`: the running log of decisions taken against the plan. Add an entry
   whenever reality differs from what was planned.
-- `.github/RELEASING.md`: how a version reaches npm.
 - `client/`: the Nuxt DevTools tab, generated into `dist/client` on publish.
 
 ## Status
