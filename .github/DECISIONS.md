@@ -1,7 +1,3 @@
----
-icon: i-lucide-scroll-text
----
-
 # Decisions
 
 > One entry per decision taken while building, kept especially where reality differed
@@ -263,3 +259,22 @@ The gap that let this ship was in the testing, not the code: the DevTools e2e ra
 real `nuxt-module-build build`, never against the stub that `pnpm dev` produces. `pnpm test:e2e`
 now ends with `dev:prepare`, so those tests run in the configuration a developer actually gets,
 and one of them asserts the client is served rather than proxied.
+
+## The docs site is one flat guide
+
+The site had a "Reference" section holding options, the API, this log and the release notes.
+It was more structure than six pages need, and it split the options table away from the guide
+that explains why you would change anything in it. Everything that documents the module is now
+one `Guide` section; this log and the release notes moved to `.github/`, because they are notes
+for whoever works on the repository, not documentation for whoever uses it.
+
+The README lost its copy of the options table and the API reference for the same reason: it
+was a second place to keep them in sync, and it always lost.
+
+## `themeColor` takes a palette name, not a hex
+
+undocs passes `themeColor` straight to Nuxt UI as `ui.colors.primary`, which expects a palette
+name. `#00DC82` is accepted by the schema and silently produces no palette at all: the hero
+button rendered invisible and every accent went grey. `emerald` (`#00d492`) is the palette
+closest to Nuxt green, so that is what the site uses. The og-image handler does take a hex,
+which is why the value looked like it worked.

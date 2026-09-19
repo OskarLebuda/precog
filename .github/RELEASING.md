@@ -1,7 +1,3 @@
----
-icon: i-lucide-package
----
-
 # Releasing
 
 > How a version of this package reaches npm, and why no token is involved.
@@ -43,11 +39,9 @@ the version, tags it and pushes. The tag starts the workflow, which publishes.
 
 ## The one time a token is needed
 
-::warning
-A trusted publisher can only be configured on a package that already exists, because the
-setting lives on the package's own settings page on npm. A brand new name has to be published
-once by a human first.
-::
+> A trusted publisher can only be configured on a package that already exists, because the
+> setting lives on the package's own settings page on npm. A brand new name has to be published
+> once by a human first.
 
 For the very first release:
 

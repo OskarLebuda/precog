@@ -10,7 +10,7 @@ interface Seen {
 /**
  * The question the whole design hangs on: does a document speculation rule do anything for a
  * NuxtLink click? This test records what the browser actually fetches, so the answer is
- * measured rather than assumed. See `docs/decisions.md`.
+ * measured rather than assumed. See `.github/DECISIONS.md`.
  */
 test("a speculated document is fetched, and a NuxtLink click does not use it", async ({ page }) => {
   const seen: Seen[] = [];

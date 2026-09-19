@@ -5,7 +5,9 @@ shortDescription: "Your links, loaded before the click."
 description: "A Nuxt module that asks TypeSafe Jev which link a visitor is about to click, then warms exactly that navigation."
 github: "OskarLebuda/nuxt-precog"
 url: "https://oskarlebuda.github.io/nuxt-precog"
-themeColor: "blue"
+# A palette name, not a hex: undocs feeds this straight to Nuxt UI as its primary
+# colour. `emerald` (#00d492) is the closest one to Nuxt green (#00DC82).
+themeColor: "emerald"
 landing:
   heroCode: "npx nuxt module add nuxt-precog"
   contributors: true

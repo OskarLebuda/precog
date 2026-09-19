@@ -2,4 +2,5 @@ node_modules
 dist
 .output
 .data
-.docs
+.docs/*
+!.docs/public

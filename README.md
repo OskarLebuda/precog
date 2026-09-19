@@ -1,6 +1,21 @@
-# nuxt-precog
+<p align="center">
+  <a href="https://oskarlebuda.github.io/nuxt-precog">
+    <img src="./.github/assets/banner.jpeg" alt="nuxt-precog" width="100%">
+  </a>
+</p>
 
-> Your links, loaded before the click.
+<p align="center">
+  <a href="https://www.npmjs.com/package/nuxt-precog"><img src="https://img.shields.io/npm/v/nuxt-precog?color=00DC82&labelColor=020420" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/nuxt-precog"><img src="https://img.shields.io/npm/dm/nuxt-precog?color=00DC82&labelColor=020420" alt="npm downloads"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/nuxt-precog?color=00DC82&labelColor=020420" alt="license"></a>
+  <a href="https://nuxt.com"><img src="https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js" alt="nuxt"></a>
+</p>
+
+<p align="center">
+  <a href="https://oskarlebuda.github.io/nuxt-precog"><b>Documentation</b></a>
+</p>
+
+---
 
 A Nuxt module that asks [TypeSafe](https://typesafe.ai/) Jev which link a visitor is about to
 click, then warms exactly that navigation with the
@@ -10,10 +25,6 @@ of the page, so you can watch it guess.
 
 Not a general prefetcher. `NuxtLink` already prefetches every link that enters the viewport.
 This one tries to prefetch three links instead of thirty, and to start before the hover.
-
-**[Documentation](https://oskarlebuda.github.io/nuxt-precog)**
-
-<!-- Record the hero clip yourself with `pnpm dev:build && pnpm record`. -->
 
 ## Quickstart
 
@@ -29,8 +40,7 @@ NUXT_PRECOG_API_KEY="your-api-key"
 ```
 
 That is the whole setup. The defaults prefetch at most three links and never prerender.
-Run `nuxt dev`, open any page and press <kbd>Shift</kbd>+<kbd>P</kbd> to see what it is doing.
-The overlay is development only unless you ask for it with `overlay: true`.
+Run `nuxt dev`, open a page and press <kbd>Shift</kbd>+<kbd>P</kbd> to see what it is doing.
 
 To let it prerender the top guess as well:
 
@@ -45,14 +55,15 @@ export default defineNuxtConfig({
 });
 ```
 
-Read [the prerender warning](#prerendering-has-side-effects) before you do.
+Every option, the composable and the hooks are in
+**[the documentation](https://oskarlebuda.github.io/nuxt-precog/guide/options)**.
 
 ## What it actually buys you
 
 Eight synthetic sessions per arm, six navigations each, real Chrome against a production
-build, throttled to 250 ms latency and 2000 kbit/s. Full method and how to read it are in
-[the benchmark page](https://oskarlebuda.github.io/nuxt-precog/guide/benchmarks); the raw
-numbers are in [`bench/results/bench.md`](./bench/results/bench.md). Reproduce with `pnpm bench`.
+build, throttled to 250 ms latency and 2000 kbit/s. Method and caveats in
+[the benchmark page](https://oskarlebuda.github.io/nuxt-precog/guide/benchmarks); reproduce
+with `pnpm bench`.
 
 | arm                 | off    | native | precog    |
 | ------------------- | ------ | ------ | --------- |
@@ -95,154 +106,40 @@ policy (thresholds, budgets, guards)
   |-> preloadPayload / preloadRouteComponents   for in-app navigations
 ```
 
-The full walk-through is in [the documentation](https://oskarlebuda.github.io/nuxt-precog/guide/how-it-works). The short version
-of the important part: **a `NuxtLink` click is not a document navigation**, so speculation
-rules do nothing for it. That is measured in `e2e/spa-vs-document.spec.ts`. The in-app win
-comes from preloading the payload of the pages the model picked, which only exists for
-prerendered routes.
+The short version of the important part: **a `NuxtLink` click is not a document navigation**,
+so speculation rules do nothing for it. That is measured in `e2e/spa-vs-document.spec.ts`. The
+in-app win comes from preloading the payload of the pages the model picked, which only exists
+for prerendered routes.
 
-## Options
+:mag: [The full walk-through](https://oskarlebuda.github.io/nuxt-precog/guide/how-it-works)
 
-All of these live under `precog` in `nuxt.config.ts`.
-
-| Option                      | Default                                                      | What it does                                                         |
-| --------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
-| `enabled`                   | `true`                                                       | Turn the whole module off without removing it.                       |
-| `endpoint`                  | `'/_precog/predict'`                                         | Path of the Nitro route that talks to Jev.                           |
-| `model`                     | `'jev-latest'`                                               | Jev model name.                                                      |
-| `baseURL`                   | unset                                                        | TypeSafe base URL. Point it at a mock in tests.                      |
-| `mode`                      | `'prefetch'`                                                 | `'prefetch'`, `'prerender'` or `'auto'`.                             |
-| `thresholds.prefetch`       | `0.25`                                                       | Lowest click probability worth a prefetch.                           |
-| `thresholds.prerender`      | `0.6`                                                        | Lowest click probability worth a prerender.                          |
-| `budget.maxPrefetch`        | `3`                                                          | Most URLs prefetched at once.                                        |
-| `budget.maxPrerender`       | `1`                                                          | Most URLs prerendered at once.                                       |
-| `budget.maxCallsPerMinute`  | `20`                                                         | Enforced on the client and on the server.                            |
-| `budget.maxCallsPerSession` | `200`                                                        | Hard stop for one visitor.                                           |
-| `maxCandidates`             | `30`                                                         | Links sent per request. Capped at 254 by Jev's choice limit.         |
-| `timeoutMs`                 | `800`                                                        | Client deadline for a prediction.                                    |
-| `minIntervalMs`             | `1200`                                                       | Shortest gap between two predictions.                                |
-| `fallback`                  | `'native'`                                                   | On failure: `'native'` document rules at `moderate`, or `'none'`.    |
-| `include`                   | `[]`                                                         | Only these path globs may be speculated. Empty means all.            |
-| `exclude`                   | `['/logout', '/signout', '/api/**', '/auth/**', '/cart/**']` | Never speculated.                                                    |
-| `cache.ttlSeconds`          | `60`                                                         | How long a prediction stays reusable on the server.                  |
-| `privacy.sendQuery`         | `false`                                                      | Send query strings. Off because they carry tokens.                   |
-| `privacy.sendAnchorText`    | `true`                                                       | Send link text.                                                      |
-| `privacy.sendHistory`       | `true`                                                       | Send the last five paths.                                            |
-| `privacy.requireConsent`    | `false`                                                      | Nothing runs until `grantConsent()`.                                 |
-| `overlay`                   | `'dev'`                                                      | `true`, `false` or `'dev'`. When false, nothing ships.               |
-| `takeOverNuxtLinkPrefetch`  | `false`                                                      | Turn off `NuxtLink`'s viewport prefetch, keep interaction.           |
-| `documentNavigation`        | `false`                                                      | Experimental. See below.                                             |
-| `pricing`                   | unset                                                        | `{ inputPerMillion, outputPerMillion }` for the overlay's cost line. |
-
-The API key is read from `runtimeConfig.precog.apiKey`, so `NUXT_PRECOG_API_KEY` sets it at run
-time. `TYPESAFE_API_KEY` works too. It is never exposed to the browser.
-
-### Per page and per link
-
-```vue
-<script setup>
-definePageMeta({ precog: false }); // this page never predicts
-</script>
-
-<template>
-  <NuxtLink to="/settings" data-precog="off">Never speculate this</NuxtLink>
-  <NuxtLink to="/pricing" data-precog="hint">Always a candidate, even off screen</NuxtLink>
-</template>
-```
-
-### Composable
-
-```ts
-const { enabled, pause, resume, refresh, grantConsent, metrics, plan } = usePrecog();
-```
-
-`pause()` stays paused until you call `resume()`; a navigation will not undo it.
-
-### Hooks
-
-```ts
-// client
-nuxtApp.hook("precog:decision", (plan, trigger) => {});
-nuxtApp.hook("precog:metrics", (summary) => {});
-```
-
-```ts
-// server, in a nitro plugin
-nitroApp.hooks.hook("precog:predict", (ctx) => {
-  // read ctx.state, or set ctx.prediction to answer without calling Jev
-});
-nitroApp.hooks.hook("precog:predicted", (ctx) => {
-  // every fresh answer, for recording or logging
-});
-```
-
-`precog:predict` is how the playground runs with no key at all, and how you would swap in your
-own model.
-
-## The overlay
-
-In development, `?precog=debug` or <kbd>Shift</kbd>+<kbd>P</kbd> draws a percentage on every candidate,
-outlines the top guess, and opens a HUD with calls, cache hits, Jev latency, tokens, hit rate
-and activations. `?precog=off` disables the module for a side-by-side comparison.
-
-There is also a DevTools tab with the same numbers and a timeline of decisions.
-
-With `overlay: 'dev'` neither ships: the plugin is only registered when the overlay is on, so
-a production build never sees the component. `pnpm check:treeshake` proves it.
-
-## Browser support and limitations
+## Limitations
 
 - **Speculation rules are Chromium only.** Elsewhere, prefetch falls back to
-  `<link rel="prefetch">` and prerender is skipped. Effector B works everywhere.
-- **Chrome limits concurrent speculations** to 50 prefetches and 10 prerenders for
-  `immediate` list rules. The default budgets are far below that.
-- **Inline rules need CSP headroom.** Add `'inline-speculation-rules'` to `script-src` if you
-  have a policy.
+  `<link rel="prefetch">` and prerender is skipped. Nuxt preloading works everywhere.
 - **Payload preloading needs a payload**, which means prerendered routes with
-  `experimental.payloadExtraction`. On a purely server-rendered route there is much less to
-  warm and the win is small.
-- **It costs money per prediction.** About 15 calls per session in the benchmark. Tune
-  `minIntervalMs`, `cache.ttlSeconds` and the budgets before pointing it at real traffic.
+  `experimental.payloadExtraction`. On a purely server-rendered route the win is small.
+- **Prerendering runs the page's JavaScript.** Analytics fire, `onMounted` fetches run. This is
+  why `mode` is `'prefetch'` by default.
+- **It costs money per prediction.** Tune `minIntervalMs`, `cache.ttlSeconds` and the budgets
+  before pointing it at real traffic.
 - **Jev is in early access.** Every failure path returns an empty prediction and the page is
   untouched.
-
-### Prerendering has side effects
-
-A prerendered page runs its JavaScript. Analytics fire, `onMounted` fetches run, media can
-autoplay. Gate anything like that:
-
-```ts
-if (document.prerendering) {
-  document.addEventListener("prerenderingchange", start, { once: true });
-} else {
-  start();
-}
-```
-
-This is why `mode` is `'prefetch'` by default, and why `maxPrerender` is 1.
-
-### `documentNavigation`
-
-Experimental. With it on, a click on a link the module prerendered bypasses the client router
-and does a real document navigation, so the browser can hand over the copy it already has.
-Good for content sites that want an MPA feel; it throws away the SPA's state on every click.
-Measured behaviour and its limits are in
-[the options reference](https://oskarlebuda.github.io/nuxt-precog/reference/options#documentnavigation).
 
 ## Privacy
 
 The module sends page context and part of a browsing path to a third party. It sends no
 identifier of any kind, no full URLs, and never the API key.
 [The privacy page](https://oskarlebuda.github.io/nuxt-precog/guide/privacy) lists exactly what
-goes over the wire, the switches that narrow it, and how to gate it behind consent.
+goes over the wire and how to gate it behind consent.
 
 ## Development
 
 ```sh
 pnpm install
-pnpm dev              # playground at localhost:3003, runs without an API key
+pnpm dev              # playground at localhost:3000, runs without an API key
 pnpm check            # lint, typecheck, unit tests
-pnpm test:e2e         # builds the playground and drives real Chrome
+pnpm test:e2e         # builds everything and drives real Chrome
 pnpm bench            # writes bench/results/bench.md
 pnpm record           # writes the side-by-side clip to bench/results, 60 fps
 pnpm docs:dev         # the documentation site
@@ -257,6 +154,9 @@ The unit suite never touches the network: `test/mock-typesafe.ts` is a small sta
 System One API, built from the wire format in
 [advocaat](https://github.com/pithings/advocaat)'s client. The live smoke test is skipped
 unless `TYPESAFE_API_KEY` is set.
+
+Two notes that did not fit on the site: [decisions](./.github/DECISIONS.md), the running log of
+why things are the way they are, and [releasing](./.github/RELEASING.md).
 
 ## License
 
