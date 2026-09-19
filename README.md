@@ -60,33 +60,34 @@ Every option, the composable and the hooks are in
 
 ## What it actually buys you
 
-Eight synthetic sessions per arm, six navigations each, real Chrome against a production
-build, throttled to 250 ms latency and 2000 kbit/s. Method and caveats in
+Eight scripted sessions per arm, six navigations each, real Chrome against a production build,
+throttled to 250 ms latency and 2000 kbit/s, predictions from Jev. Method in
 [the benchmark page](https://oskarlebuda.github.io/nuxt-precog/guide/benchmarks); reproduce
 with `pnpm bench`.
 
-| arm                 | off    | native | precog    |
-| ------------------- | ------ | ------ | --------- |
-| navigation median   | 145 ms | 142 ms | **63 ms** |
-| navigation p95      | 403 ms | 403 ms | 389 ms    |
-| hit rate            | n/a    | n/a    | 46%       |
-| top guess correct   | n/a    | n/a    | 27%       |
-| wasted kB / session | 6.9    | 6.9    | 18.6      |
-| jev calls / session | 0      | 0      | 14.6      |
+| arm                   | off    | native | precog       |
+| --------------------- | ------ | ------ | ------------ |
+| navigation median     | 147 ms | 145 ms | **68 ms**    |
+| navigation p95        | 404 ms | 397 ms | 395 ms       |
+| hit rate              | n/a    | n/a    | 29%          |
+| top guess correct     | n/a    | n/a    | 17%          |
+| wasted kB / session   | 6.9    | 6.9    | 10.3         |
+| jev calls / session   | 0      | 0      | 14.9         |
+| jev latency p50 / p95 | n/a    | n/a    | 372 / 622 ms |
 
 Read that honestly:
 
 - The median navigation gets about twice as fast. **The p95 does not move.** The tail is the
   navigations the model got wrong, and no amount of prediction fixes those.
-- It roughly triples wasted bytes, from about 7 kB to about 19 kB per session.
-- It costs about 15 Jev calls per session, 18 percent of which the server answered from cache.
+- It adds about 3 kB of wasted bytes per session, and costs about 15 Jev calls and 10,000
+  tokens, a sixth of the calls answered from the server cache.
 - `native` is document speculation rules at `eagerness: moderate`. It is free, needs no model
-  and no key, and in this benchmark it ties `off`, because a visitor who clicks soon after the
-  cursor lands does not give the browser enough hover to work with. That gap is what precog is
-  for. If your visitors hover for a second before clicking, use `native` and save the money.
+  and no key, and here it ties `off`, because a visitor who clicks soon after the cursor lands
+  does not give the browser enough hover to work with. That gap is what precog is for. If your
+  visitors hover for a second before clicking, use `native` and save the money.
 - `off` is not "nothing": `NuxtLink` still prefetches on interaction in every arm.
-- The visitors are synthetic and their click model is a guess. Hit rate and accuracy describe
-  how the module does against that model, not against your users.
+- Hit rate and accuracy are measured against a scripted visitor, not a real audience. The
+  timings do not depend on it.
 
 ## How it works
 

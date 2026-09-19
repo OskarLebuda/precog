@@ -142,11 +142,20 @@ benchmark keeps it and says so in the table.
 
 ## What the benchmark actually shows
 
-Median navigation drops from about 145 ms to about 63 ms, and p95 does not move at all
-(403 ms against 389 ms). Precog helps the common case and does nothing for the tail, which is
-what you would expect: the tail is the navigations the model got wrong. It roughly doubles
-speculative waste, from about 7 kB to about 19 kB per session, and costs around 15 Jev calls
-per session with 18 percent of those answered from the server cache. None of that is hidden.
+Measured against Jev itself: median navigation drops from about 147 ms to about 68 ms, and p95
+does not move (404 ms against 395 ms). Precog helps the common case and does nothing for the
+tail, which is what you would expect, because the tail is the navigations the model got wrong.
+It adds roughly 3 kB of speculative waste per session, costs about 15 calls and 10,000 tokens,
+and the server cache answers a sixth of them.
+
+The first version of this table was produced against a heuristic standing in for the model, and
+it flattered the module: 46 percent hit rate instead of 29, and 27 percent top-guess accuracy
+instead of 17. The stand-in scored candidates by position and visibility, which is exactly how
+the scripted visitor picks a link, so it was in effect being graded on its own answer sheet.
+That is a good argument for never benchmarking against a mock of the thing under test.
+
+Wasted bytes went the other way, 18.6 kB down to 10.3. Jev concentrates probability far more
+than the heuristic did, so fewer links clear the threshold.
 
 ## Runtime imports carry no file extension
 
