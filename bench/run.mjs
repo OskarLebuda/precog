@@ -9,7 +9,8 @@
  * hit rate and accuracy as "how well the module does against this model", not as a claim
  * about real people. Timings are real: real Chrome, a real build, a throttled link.
  *
- * Usage: pnpm dev:build && pnpm bench
+ * Needs a key: the playground has no stand-in, so every arm measures the real service.
+ * Usage: pnpm dev:build && TYPESAFE_API_KEY=... pnpm bench
  */
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -241,8 +242,7 @@ ${body.join("\n")}
 - The visitors are synthetic. Their click model weights links by position, so hit rate and
   accuracy say how well the module does against that model, not against real people.
 - Timings are real. They are wall-clock milliseconds from the click to the new page's heading.
-- Predictions in this run came from ${meta.mock ? "the playground's stand-in, not from Jev" : "Jev"}.
-  ${meta.mock ? "Latency and token figures are therefore made up and only the shape of the pipeline is real." : ""}
+- Predictions came from Jev itself. Latency and token figures are real.
 - ${meta.priced ? "Cost uses the prices passed in `BENCH_PRICE_IN` and `BENCH_PRICE_OUT`." : "No prices were given, so cost is not reported. TypeSafe does not publish one."}
 - The three arms are not "nothing, something, precog". The playground sets
   \`takeOverNuxtLinkPrefetch\`, so in every arm \`NuxtLink\` still prefetches a link the cursor
@@ -253,6 +253,14 @@ ${body.join("\n")}
 
 Generated ${meta.at}.
 `;
+}
+
+if (!process.env.TYPESAFE_API_KEY && !process.env.AI_GATEWAY_API_KEY) {
+  console.error(
+    "Set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY. The benchmark measures the real service, so\n" +
+      "without a key the precog arm would predict nothing and the numbers would be meaningless.",
+  );
+  process.exit(1);
 }
 
 const server = spawn("node", ["playground/.output/server/index.mjs"], {
@@ -296,7 +304,7 @@ try {
     hops: HOPS,
     latency: CONDITIONS.latency,
     downloadKbps: Math.round((CONDITIONS.downloadThroughput * 8) / 1024),
-    mock: process.env.PRECOG_MOCK !== "0",
+
     priced: PRICING !== null,
   };
 

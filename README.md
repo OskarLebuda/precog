@@ -146,7 +146,7 @@ goes over the wire and how to gate it behind consent.
 
 ```sh
 pnpm install
-pnpm dev              # playground at localhost:3000, runs without an API key
+pnpm dev              # playground at localhost:3000, needs a key in playground/.env
 pnpm check            # lint, typecheck, unit tests
 pnpm test:e2e         # builds everything and drives real Chrome
 pnpm bench            # writes bench/results/bench.md

@@ -347,3 +347,22 @@ The option now defaults to unset and advocaat picks per provider.
 804 ms, against a plan that assumed 70 to 500. The first real request through the module timed
 out at exactly 800 ms. The default is now 1500 ms. Candidate count barely moves latency (3 and
 30 candidates land in the same range) but does move tokens, 1051 against 3459.
+
+## The playground has no stand-in of its own
+
+It used to answer the `precog:predict` hook with a heuristic, so `pnpm dev` worked with no key.
+That was convenient and dishonest: the demo, the overlay numbers and the whole end-to-end suite
+never touched the server route's call to Jev, and the HUD showed a latency the stand-in made up.
+
+The heuristic moved into `test/mock-typesafe.ts`, which is a mock of the _service_, not of the
+module. The playground now always takes the real path, and the end-to-end suite starts that
+mock and points the playground at it with `TYPESAFE_BASE_URL`. Same cost, no key, and the
+coverage now includes the route and advocaat's HTTP client.
+
+`pnpm dev` and `pnpm bench` need a key. For the benchmark that is the point: it is supposed to
+measure the real service.
+
+Two things the move surfaced, both from ranking by label instead of by document order: `l10`
+sorted ahead of `l2`, and the mock's `exit` probability was high enough to push the top
+candidate just under the prerender threshold. Ties now keep document order, and `exit` drops
+when the cursor is on a link, because someone hovering a link is not about to leave.

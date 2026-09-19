@@ -31,42 +31,87 @@ export interface MockServer {
   close: () => Promise<void>;
 }
 
-/** Spreads probability over the options, with most of it on the first candidate. */
+/** The precog state, as far as the mock needs to read it. */
+interface MaybePrecogState {
+  page?: { path?: string };
+  pointer?: { hoveredId?: string | null; nearestIds?: string[]; hasHover?: boolean };
+  candidates?: Array<{ id: string; path: string; inViewport?: boolean }>;
+}
+
+/**
+ * Ranks the options the way a model plausibly would: whatever the cursor is on or heading
+ * for, then what is on screen, then what stays in the same section. Probability decays
+ * geometrically down the ranking, leaving some for "no click at all".
+ *
+ * This is a stand-in, not a model. It exists so the end-to-end tests can assert that a plan
+ * follows the pointer without spending money or needing a key.
+ */
+function rankCandidates(state: MaybePrecogState, labels: string[]) {
+  const candidates = state.candidates ?? [];
+  const byId = new Map(candidates.map((candidate) => [candidate.id, candidate]));
+  const nearest = new Set(state.pointer?.nearestIds ?? []);
+  const section = (state.page?.path ?? "").split("/")[1] ?? "";
+
+  const scored = labels
+    .filter((label) => label !== "none")
+    .map((label, index) => {
+      const candidate = byId.get(label);
+      return {
+        label,
+        index,
+        score:
+          (label === state.pointer?.hoveredId ? 3 : 0) +
+          (nearest.has(label) ? 2 : 0) +
+          (candidate?.inViewport ? 1 : 0) +
+          (section && candidate?.path.startsWith(`/${section}`) ? 1 : 0),
+      };
+    })
+    // Ties keep document order. Sorting by label would put `l10` ahead of `l2`.
+    .sort((a, b) => b.score - a.score || a.index - b.index);
+
+  const decay = 0.65;
+  const total = scored.reduce((sum, _, index) => sum + decay ** index, 0) || 1;
+  const probabilities: Record<string, number> = {};
+  let spent = 0;
+  for (const [index, entry] of scored.entries()) {
+    const p = Math.round(((0.85 * decay ** index) / total) * 1000) / 1000;
+    probabilities[entry.label] = p;
+    spent += p;
+  }
+  if (labels.includes("none")) probabilities.none = Math.round((1 - spent) * 1000) / 1000;
+  return { choice: scored[0]?.label ?? labels[0]!, probabilities };
+}
+
+/** Answers every question from the state, so a plan can be asserted end to end. */
 function defaultAnswers(req: MockRequest) {
+  const state = (req.state ?? {}) as MaybePrecogState;
   const answers: Record<string, unknown> = {};
   for (const [name, question] of Object.entries(req.questions)) {
     if (question.type === "choice") {
       const labels = Object.keys(question.criteria as Record<string, unknown>);
-      const probabilities: Record<string, number> = {};
-      const rest = labels.length > 1 ? 0.3 / (labels.length - 1) : 0;
-      for (const [index, label] of labels.entries()) {
-        probabilities[label] = index === 0 ? 0.7 : rest;
-      }
-      answers[name] = {
-        type: "choice",
-        choice: labels[0],
-        confidence: 0.7,
-        probabilities,
-      };
+      const { choice, probabilities } = rankCandidates(state, labels);
+      answers[name] = { type: "choice", choice, confidence: 0.7, probabilities };
     } else if (question.type === "score") {
       const levels = (question.criteria as unknown[]).length;
       const probabilities: Record<string, number> = {};
       for (let i = 0; i < levels; i++) probabilities[String(i)] = 1 / levels;
       answers[name] = {
         type: "score",
-        score: (levels - 1) / 2,
+        // Someone with the cursor on a link is about to click; the levels run low to high.
+        score: state.pointer?.hoveredId ? levels - 1 : (levels - 1) / 2,
         confidence: 0.4,
         legend: question.criteria,
         probabilities,
       };
     } else {
-      answers[name] = { type: "noul", noul: 0.2 };
+      // Someone with the cursor on a link is not about to leave the site.
+      answers[name] = { type: "noul", noul: state.pointer?.hoveredId ? 0.1 : 0.2 };
     }
   }
   return answers;
 }
 
-export async function startMock(options: MockOptions = {}): Promise<MockServer> {
+export async function startMock(options: MockOptions = {}, port = 0): Promise<MockServer> {
   const requests: MockRequest[] = [];
   const keys: string[] = [];
 
@@ -111,11 +156,11 @@ export async function startMock(options: MockOptions = {}): Promise<MockServer> 
     });
   });
 
-  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-  const { port } = server.address() as AddressInfo;
+  await new Promise<void>((resolve) => server.listen(port, "127.0.0.1", resolve));
+  const bound = (server.address() as AddressInfo).port;
 
   const mock: MockServer = {
-    url: `http://127.0.0.1:${port}`,
+    url: `http://127.0.0.1:${bound}`,
     requests,
     keys,
     options: { ...options },

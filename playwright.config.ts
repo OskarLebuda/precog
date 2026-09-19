@@ -6,10 +6,14 @@ const baseURL = `http://127.0.0.1:${PORT}`;
 // `nuxt dev` binds to localhost, not 127.0.0.1, so the health check has to match.
 const devURL = `http://localhost:${DEV_PORT}`;
 
+// The stand-in TypeSafe API that `e2e/global-setup.ts` starts.
+const MOCK_URL = "http://127.0.0.1:4571";
+
 const chrome = { ...devices["Desktop Chrome"], channel: "chrome" as const };
 
 export default defineConfig({
   testDir: "./e2e",
+  globalSetup: "./e2e/global-setup.ts",
   fullyParallel: false,
   workers: 1,
   timeout: 60_000,
@@ -39,6 +43,7 @@ export default defineConfig({
         NITRO_PORT: String(PORT),
         // A key the tests then look for in everything the server sends to the browser.
         NUXT_PRECOG_API_KEY: "e2e-secret-key",
+        TYPESAFE_BASE_URL: MOCK_URL,
       },
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
@@ -49,6 +54,8 @@ export default defineConfig({
       env: {
         // Lets an automated browser drive DevTools without the authorization prompt.
         PRECOG_DEVTOOLS_OPEN: "1",
+        NUXT_PRECOG_API_KEY: "e2e-secret-key",
+        TYPESAFE_BASE_URL: MOCK_URL,
       },
       reuseExistingServer: !process.env.CI,
       timeout: 180_000,
