@@ -1,25 +1,40 @@
 # Changelog
 
-## v0.1.1
+## v0.2.0
 
-The first release against the real Jev. Everything in 0.1.0 was built and tested against
-stand-ins, and the first real key found three things it could not have.
+The first release built against the real Jev. Everything in 0.1.0 was developed and tested
+against stand-ins, and the first real key found three things it could not have.
 
-### Fixes
+### Features
 
-- Support Vercel AI Gateway keys. An `AI_GATEWAY_API_KEY` now selects the gateway on its own,
-  and a new `provider` option covers a gateway key passed through `NUXT_PRECOG_API_KEY`. Before
-  this, a gateway key went to `api.typesafe.ai` and came back `401`.
-- `model` defaults to unset instead of `jev-latest`. Through the gateway a bare name gets a
-  `typesafe-ai/` prefix, so the old default asked for `typesafe-ai/jev-latest`, which does not
-  exist. advocaat now picks the right name for whichever service the key belongs to.
-- `timeoutMs` defaults to 1500 instead of 800. Real round trips measure 338 to 501 ms, with
-  cold ones over 800, so the old default cut off the first request of a session.
+- Vercel AI Gateway keys. An `AI_GATEWAY_API_KEY` selects the gateway on its own, and a new
+  `provider` option covers a gateway key passed through `NUXT_PRECOG_API_KEY`. Before this, a
+  gateway key went to `api.typesafe.ai` and came back `401`.
+- The overlay and the DevTools tab show why the last prediction failed, instead of only
+  counting it. A wrong key, a timeout and a rejected request shape used to look identical.
 
-### Confirmed
+### Changed behaviour
+
+- `model` now defaults to unset rather than `jev-latest`. Through the gateway a bare name gets
+  a `typesafe-ai/` prefix, so the old default asked for `typesafe-ai/jev-latest`, which does not
+  exist. advocaat picks the right name for whichever service the key belongs to. Set it only if
+  you know you need to.
+- `timeoutMs` now defaults to 1500 rather than 800. Measured round trips are 372 ms at the
+  median and 622 ms at the p95, with cold ones over 800, so the old default cut off the first
+  prediction of a session.
+
+### Confirmed against the real service
 
 - Jev accepts the module's own option keys (`l0`, `l1`, ... and `none`) and answers with them,
-  which is what keeps the model's output space to ids the server wrote itself.
+  which is what keeps its output space to ids the server wrote itself.
+- The benchmark now measures Jev rather than a heuristic. Median navigation 147 ms to 68 ms,
+  p95 unchanged, 29 percent hit rate against a scripted visitor. The earlier published figures
+  came from a stand-in that shared the visitor's own click model and flattered the module.
+
+### Development
+
+- The playground has no stand-in of its own and needs a key. The end-to-end suite starts a mock
+  of the *service* instead, so it now covers the server route and advocaat's HTTP client too.
 
 ## v0.1.0
 
