@@ -2,6 +2,7 @@ import { DOC_SLUGS } from "./shared/docs";
 
 export default defineNuxtConfig({
   modules: ["nuxt-precog"],
+  devServer: { port: 3003 },
   devtools: {
     enabled: true,
     // Lets the e2e suite drive DevTools from an automated browser.

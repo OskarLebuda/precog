@@ -240,7 +240,7 @@ goes over the wire, the switches that narrow it, and how to gate it behind conse
 
 ```sh
 pnpm install
-pnpm dev              # playground at localhost:3000, runs without an API key
+pnpm dev              # playground at localhost:3003, runs without an API key
 pnpm check            # lint, typecheck, unit tests
 pnpm test:e2e         # builds the playground and drives real Chrome
 pnpm bench            # writes bench/results/bench.md
@@ -248,6 +248,10 @@ pnpm record           # writes the side-by-side clip to bench/results, 60 fps
 pnpm docs:dev         # the documentation site
 pnpm client:dev       # the DevTools tab on its own, while working on it
 ```
+
+`pnpm dev:prepare` builds the DevTools tab client into `dist/client`, which `pnpm dev` runs
+first. To work on the tab itself, start `pnpm client:dev` and run the playground with
+`PRECOG_DEVTOOLS_LOCAL=1`, which proxies the tab to that dev server instead.
 
 The unit suite never touches the network: `test/mock-typesafe.ts` is a small stand-in for the
 System One API, built from the wire format in

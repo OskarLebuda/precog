@@ -50,6 +50,14 @@ const hasRules = (page: Page) =>
     () => document.querySelector('script[type="speculationrules"][data-precog]') !== null,
   );
 
+test("serves the tab's client itself, rather than proxying to nothing", async ({ page }) => {
+  // The client is resolved from the build. When that lookup breaks, the tab is a blank page
+  // and the terminal only says ECONNREFUSED, so it is worth asserting on directly.
+  const response = await page.request.get(`${CLIENT_URL}/`);
+  expect(response.status()).toBe(200);
+  expect(await response.text()).toContain("<html");
+});
+
 test("registers a tab whose client reads the module from the host page", async ({ page }) => {
   await page.goto("/docs");
   await page.waitForLoadState("networkidle");
