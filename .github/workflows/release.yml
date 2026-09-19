@@ -28,4 +28,13 @@ jobs:
       - run: pnpm build
       # No NODE_AUTH_TOKEN: the OIDC id-token is the credential, and npm attaches build
       # provenance by itself. Scripts are skipped because the build already ran above.
-      - run: npm publish --ignore-scripts
+      # The version check keeps a tag pushed for an already-published version from failing,
+      # which is what happens to the first release, published by hand.
+      - name: Publish when the version is new
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "nuxt-precog@$VERSION" version >/dev/null 2>&1; then
+            echo "nuxt-precog@$VERSION is already on npm, nothing to publish."
+            exit 0
+          fi
+          npm publish --ignore-scripts
