@@ -147,3 +147,22 @@ Median navigation drops from about 145 ms to about 63 ms, and p95 does not move 
 what you would expect: the tail is the navigations the model got wrong. It roughly doubles
 speculative waste, from about 7 kB to about 19 kB per session, and costs around 15 Jev calls
 per session with 18 percent of those answered from the server cache. None of that is hidden.
+
+## Runtime imports carry no file extension
+
+Building the module and installing the tarball into a fresh Nuxt app failed twice, in two
+different ways, both caused by `.ts` extensions:
+
+1. `createResolver().resolve("./runtime/plugin.client.ts")` pointed at a file that only exists
+   in the source tree; the build ships `plugin.client.js`.
+2. Relative imports inside the runtime kept their `.ts` specifiers, which the build does not
+   rewrite, so the shipped `plugin.client.js` imported `./core/orchestrator.ts`.
+
+Every relative import under `src/` is now extensionless, and the fresh-app check is part of the
+release routine rather than something to remember.
+
+## `vue-tsc` is required to build
+
+The overlay is a single-file component, and `@nuxt/module-builder` needs `vue-tsc` to emit its
+declarations. Without it the build fails with an unhelpful `Cannot read properties of
+undefined (reading 'errors')`.

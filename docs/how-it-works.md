@@ -1,0 +1,101 @@
+# How it works
+
+```
+Browser (client plugin)                Nitro (server)                    TypeSafe
+-----------------------                --------------                    --------
+collect candidate links
+watch scroll and pointer
+schedule, abort the stale one  --POST-->  validate, rate limit, cache
+                                          one request, three questions  ----> Jev
+                               <--------  [{ id, p }], soon, exit
+policy: thresholds, budgets,
+guards
+  |-> effector A  <script type="speculationrules">   document navigations
+  |-> effector B  preloadPayload, preloadRouteComponents   in-app navigations
+telemetry -> overlay, devtools, hooks
+```
+
+## 1. Candidates
+
+Every `a[href]` with a box is read from the DOM after hydration, after each navigation, and
+after a debounced DOM mutation. A link becomes a candidate when it is same-origin, is not the
+current page, is not a `download`, is not `data-precog="off"`, and passes `include` and
+`exclude`. Survivors are deduped by path, sorted (hinted first, then visible, then document
+order), capped at `maxCandidates`, and given opaque ids: `l0`, `l1`, and so on.
+
+The ids matter. Jev is asked to pick one of them, so the model's whole output space is a set
+of strings the server wrote itself. Anchor text goes into the request only as the description
+of an option, and the server strips backticks and newlines from it first.
+
+## 2. Signals
+
+Alongside the links the client sends a small state: the page path, title, `h1` and
+description; the last five paths; time on page, scroll depth and scroll velocity; the pointer
+position, velocity, the three links it is heading towards and the one it is over; and
+`saveData` and `effectiveType`.
+
+Everything is rounded and clamped. Positions are tenths of the viewport, not pixels. A full
+state with thirty candidates is a few kilobytes.
+
+## 3. Timing
+
+A prediction is scheduled when a route finishes, when a scroll settles for 150 ms, when the
+pointer changes which link it is closing on, and when the DOM changes. `minIntervalMs` keeps
+those from piling up, one request is in flight at a time, and starting a new one aborts the
+old one. A response whose candidate list no longer matches the page is thrown away.
+
+Nothing runs before hydration, while the tab is hidden, while the document is itself being
+prerendered, on `saveData`, on a `2g` connection, or before consent when you ask for it.
+
+## 4. The questions
+
+One request, three questions, evaluated in parallel:
+
+| Key    | Type                                      | Asked                                                     |
+| ------ | ----------------------------------------- | --------------------------------------------------------- |
+| `next` | choice over the candidate ids plus `none` | Which of these links will the visitor click next, if any? |
+| `soon` | score over four levels                    | How soon will the visitor open another page?              |
+| `exit` | yes/no                                    | Will the visitor leave the site entirely instead?         |
+
+The click probability of a link is `next.probabilities[id]`, discounted by `exit`. `soon.ratio`
+decides whether a prerender is worth its cost.
+
+## 5. The policy
+
+| Condition                                                                      | Action                          |
+| ------------------------------------------------------------------------------ | ------------------------------- |
+| `p >= thresholds.prerender`, `soon >= 0.5`, mode allows, not `target="_blank"` | prerender, up to `maxPrerender` |
+| `p >= thresholds.prefetch`                                                     | prefetch, up to `maxPrefetch`   |
+| otherwise                                                                      | nothing                         |
+
+A link that is already being speculated keeps its slot while it stays above three quarters of
+its threshold, so a wobbling probability does not cancel and restart the same load.
+
+## 6. The two effectors
+
+Nuxt navigations are handled by the client router, which is not a document navigation, so
+document speculation rules do nothing for them. This is measured, not assumed: see
+`e2e/spa-vs-document.spec.ts` and `docs/decisions.md`. Hence two effectors.
+
+**A. Speculation rules.** One `<script type="speculationrules" data-precog>`, replaced on every
+decision, with `source: "list"`, `eagerness: "immediate"` and `tag: "precog"` so the loads can
+be told apart by the `Sec-Speculation-Tags` request header. Without the API, prefetch falls
+back to `<link rel="prefetch">` and prerender is skipped. This is what makes a full document
+navigation fast: the first landing on a site, a link opened in a new tab, and the experimental
+`documentNavigation` mode.
+
+**B. Nuxt preloading.** `preloadPayload` and `preloadRouteComponents` for the chosen routes, in
+probability order. This is where the in-app win comes from, and only for routes that have a
+payload, which means prerendered routes with `experimental.payloadExtraction`.
+
+## 7. The server
+
+`POST {endpoint}` rebuilds a trusted state from the body rather than trusting its shape: paths
+must be rooted and same-origin, candidate ids must be exactly `l<index>`, numbers are clamped,
+and anything else is rejected with a reason in `x-precog-reason`. Cross-site callers are
+refused. Calls are rate limited per IP with a token bucket, then looked up in Nitro storage
+under a key built from the page, the link set, and coarse buckets of the signals. The
+`precog:predict` hook can answer instead of Jev; `precog:predicted` sees every fresh answer.
+
+Any failure is a `503` with an empty prediction. The client then applies `fallback` and the
+page is untouched.
