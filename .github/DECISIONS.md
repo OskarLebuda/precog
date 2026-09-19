@@ -308,3 +308,21 @@ exists and fails on a genuinely clean build with a mangled relative path
 (`../../../../../../../../playground/shared/docs.ts`), because `shared/` is a Nuxt directory
 convention and is resolved through the `#shared` alias, not relatively. The bug had been there
 the whole time and was invisible locally, because `playground/.nuxt` was never deleted.
+
+## The docs site is deployed under a path prefix
+
+GitHub Pages serves this repository at `oskarlebuda.github.io/nuxt-precog/`, not at a domain
+root. undocs builds asset paths from `/`, so the first deploy returned a perfectly valid
+`index.html` whose every asset 404ed: a blank page.
+
+`NUXT_APP_BASE_URL=/nuxt-precog/` fixes the bundled assets. It does not fix undocs' logo and
+favicon, which are hardcoded as `/icon.svg` in its app config and end up both in the
+prerendered HTML and in the client bundle. `scripts/fix-docs-base.mjs` rewrites those after the
+build, matching only the fully quoted forms so a longer path is never caught by accident.
+
+The base path lives in the workflow rather than in `docs:build`, because it is a property of
+where the site is deployed, not of the site. A local `pnpm docs:build` still produces a
+root-based build, which is what you want when previewing it.
+
+What let this through: the deploy was checked with `curl`, which returned 200 and the right
+`<title>`. The HTML was never the problem. A page is not verified until something renders it.
