@@ -33,7 +33,10 @@ export interface PredictStorage {
 export interface PredictDeps {
   apiKey: string;
   baseURL?: string;
-  model: string;
+  /** Left unset so advocaat picks the right default for the provider. */
+  model?: string;
+  /** `"vercel"` routes through the AI Gateway. Unset lets advocaat decide from the key. */
+  provider?: "typesafe" | "vercel";
   timeoutMs: number;
   ttlSeconds: number;
   fetch?: typeof globalThis.fetch;
@@ -116,7 +119,7 @@ async function writeCache(
  */
 export async function runPrediction(state: PrecogState, deps: PredictDeps): Promise<PredictResult> {
   const now = deps.now ?? Date.now;
-  const key = cacheKey(state, deps.model);
+  const key = cacheKey(state, `${deps.provider ?? "auto"}:${deps.model ?? "default"}`);
 
   const cached = await readCache(deps.storage, key);
   // Usage is zeroed so a cache hit does not count again towards the estimated cost.
@@ -144,7 +147,10 @@ export async function runPrediction(state: PrecogState, deps: PredictDeps): Prom
     const client = typesafe({
       apiKey: deps.apiKey,
       ...(deps.baseURL ? { baseURL: deps.baseURL } : {}),
-      model: deps.model,
+      // A bare model name gets a `typesafe-ai/` prefix through the gateway, so `jev-latest`
+      // becomes `typesafe-ai/jev-latest`, which does not exist. Unset is the safe default.
+      ...(deps.model ? { model: deps.model } : {}),
+      ...(deps.provider ? { provider: deps.provider } : {}),
       ...(deps.fetch ? { fetch: deps.fetch } : {}),
     });
     const result = await client.systemOne(

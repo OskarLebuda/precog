@@ -1,5 +1,26 @@
 # Changelog
 
+## v0.1.1
+
+The first release against the real Jev. Everything in 0.1.0 was built and tested against
+stand-ins, and the first real key found three things it could not have.
+
+### Fixes
+
+- Support Vercel AI Gateway keys. An `AI_GATEWAY_API_KEY` now selects the gateway on its own,
+  and a new `provider` option covers a gateway key passed through `NUXT_PRECOG_API_KEY`. Before
+  this, a gateway key went to `api.typesafe.ai` and came back `401`.
+- `model` defaults to unset instead of `jev-latest`. Through the gateway a bare name gets a
+  `typesafe-ai/` prefix, so the old default asked for `typesafe-ai/jev-latest`, which does not
+  exist. advocaat now picks the right name for whichever service the key belongs to.
+- `timeoutMs` defaults to 1500 instead of 800. Real round trips measure 338 to 501 ms, with
+  cold ones over 800, so the old default cut off the first request of a session.
+
+### Confirmed
+
+- Jev accepts the module's own option keys (`l0`, `l1`, ... and `none`) and answers with them,
+  which is what keeps the model's output space to ids the server wrote itself.
+
 ## v0.1.0
 
 First release.

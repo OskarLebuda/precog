@@ -315,3 +315,35 @@ root-based build, which is what you want when previewing it.
 
 What let this through: the deploy was checked with `curl`, which returned 200 and the right
 `<title>`. The HTML was never the problem. A page is not verified until something renders it.
+
+## What the first real call to Jev changed
+
+Everything up to 0.1.0 was built and tested against stand-ins: a local HTTP server written from
+advocaat's client source, and a heuristic in the playground answering the `precog:predict` hook.
+The live smoke test was skipped on every single run. The first real key found four things.
+
+**The question schema is fine.** Jev accepts `l0`, `l1`, `none` as option keys and answers with
+them, which was an open question in the plan and is the whole containment story. With the cursor
+on a link it gave that link `0.83` and the other `0.01`.
+
+**A Vercel AI Gateway key is not a TypeSafe key.** Sent to `api.typesafe.ai` it answers
+`401 Cannot authenticate with the server`, which reads like a bad key rather than the wrong
+service. The module had no gateway support at all. It now resolves the provider from which
+variable the key arrived in, and takes a `provider` option for when it arrives through
+`NUXT_PRECOG_API_KEY`.
+
+**`model: "jev-latest"` breaks the gateway.** advocaat prefixes a bare name with `typesafe-ai/`,
+so the default asked for `typesafe-ai/jev-latest`, which does not exist. Measured:
+
+```
+default (no model)       OK,  model=typesafe-ai/jev
+model: "jev-latest"      FAILED 404 Model 'typesafe-ai/jev-latest' not found
+model: "typesafe-ai/jev" OK
+```
+
+The option now defaults to unset and advocaat picks per provider.
+
+**The 800 ms timeout was too tight.** Real round trips measure 338 to 501 ms, with a cold one at
+804 ms, against a plan that assumed 70 to 500. The first real request through the module timed
+out at exactly 800 ms. The default is now 1500 ms. Candidate count barely moves latency (3 and
+30 candidates land in the same range) but does move tokens, 1051 against 3459.

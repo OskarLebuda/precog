@@ -28,8 +28,18 @@ export interface ModuleOptions {
   enabled: boolean;
   /** Path of the Nitro route that talks to Jev. */
   endpoint: string;
-  /** Jev model name. */
-  model: string;
+  /**
+   * Model name. Left unset, advocaat picks the right one for the service: `jev-latest`
+   * against TypeSafe directly, `typesafe-ai/jev` through the Vercel AI Gateway. Setting
+   * `jev-latest` explicitly breaks the gateway, which would look for `typesafe-ai/jev-latest`.
+   */
+  model?: string;
+  /**
+   * Which service the key belongs to. Unset, an `AI_GATEWAY_API_KEY` selects the gateway and
+   * anything else goes to TypeSafe directly. Set `'vercel'` when a gateway key is passed
+   * through `NUXT_PRECOG_API_KEY` instead.
+   */
+  provider?: "typesafe" | "vercel";
   /** TypeSafe base URL. Set it to point tests at a mock server. */
   baseURL?: string;
   /** Which speculative loads the policy may plan. */
@@ -38,7 +48,10 @@ export interface ModuleOptions {
   budget: PrecogBudget;
   /** Most links sent in one request. Jev allows 255 choices, one of which is `none`. */
   maxCandidates: number;
-  /** Client-side deadline for a prediction. */
+  /**
+   * Client-side deadline for a prediction. Measured round trips to Jev sit between 340 and
+   * 500 ms, with cold ones over 800, so this leaves roughly three times the usual headroom.
+   */
   timeoutMs: number;
   /** Shortest gap between two predictions. */
   minIntervalMs: number;
@@ -66,7 +79,8 @@ export interface ModuleOptions {
 const defaults: ModuleOptions = {
   enabled: true,
   endpoint: "/_precog/predict",
-  model: "jev-latest",
+  model: undefined,
+  provider: undefined,
   baseURL: undefined,
   mode: "prefetch",
   thresholds: { prefetch: 0.25, prerender: 0.6 },
@@ -77,7 +91,7 @@ const defaults: ModuleOptions = {
     maxCallsPerSession: 200,
   },
   maxCandidates: 30,
-  timeoutMs: 800,
+  timeoutMs: 1500,
   minIntervalMs: 1200,
   fallback: "native",
   include: [],
@@ -137,7 +151,8 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.runtimeConfig.precog as Record<string, unknown>,
       {
         apiKey: "",
-        model: options.model,
+        model: options.model ?? "",
+        provider: options.provider ?? "",
         baseURL: options.baseURL ?? "",
         maxCandidates: publicOptions.maxCandidates,
         timeoutMs: options.timeoutMs,

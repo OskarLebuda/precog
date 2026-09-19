@@ -25,6 +25,7 @@ interface PrecogServerConfig {
   apiKey: string;
   model: string;
   baseURL: string;
+  provider: "typesafe" | "vercel" | "";
   maxCandidates: number;
   timeoutMs: number;
   cache: { ttlSeconds: number };
@@ -35,6 +36,26 @@ interface PrecogServerConfig {
 }
 
 const EMPTY: PrecogPrediction = { ranks: [], soon: 0, exit: 0, cached: false, latencyMs: 0 };
+
+/**
+ * Works out which key to use and which service it belongs to.
+ *
+ * `NUXT_PRECOG_API_KEY` is handled by Nuxt, `TYPESAFE_API_KEY` is advocaat's own name for a
+ * direct key, and `AI_GATEWAY_API_KEY` is a Vercel AI Gateway key. A gateway key only works
+ * against the gateway, so finding one there picks the provider as well.
+ */
+function credentials(config: PrecogServerConfig) {
+  const direct = config.apiKey || readEnv("TYPESAFE_API_KEY");
+  const gateway = readEnv("AI_GATEWAY_API_KEY");
+  const provider = config.provider || (!direct && gateway ? "vercel" : undefined);
+  return {
+    apiKey: direct || gateway || "",
+    baseURL: config.baseURL || readEnv("TYPESAFE_BASE_URL") || undefined,
+    // Unset means advocaat picks: `jev-latest` directly, `typesafe-ai/jev` through the gateway.
+    model: config.model || undefined,
+    provider,
+  };
+}
 
 let limiter: RateLimiter | undefined;
 
@@ -93,10 +114,7 @@ export default defineEventHandler(async (event): Promise<PrecogPrediction> => {
     callHook: (name: string, ctx: unknown) => Promise<void>;
   };
   const { status, prediction, reason } = await runPrediction(validation.state, {
-    // `NUXT_PRECOG_API_KEY` is handled by Nuxt; `TYPESAFE_API_KEY` is advocaat's own name.
-    apiKey: config.apiKey || readEnv("TYPESAFE_API_KEY") || "",
-    baseURL: config.baseURL || readEnv("TYPESAFE_BASE_URL") || undefined,
-    model: config.model,
+    ...credentials(config),
     timeoutMs: config.timeoutMs,
     ttlSeconds: config.cache.ttlSeconds,
     storage: useStorage("cache") as unknown as PredictStorage,

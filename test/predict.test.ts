@@ -49,7 +49,6 @@ beforeEach(() => {
 const deps = (over: Partial<PredictDeps> = {}): PredictDeps => ({
   apiKey: "test-key",
   baseURL: mock.url,
-  model: "jev-latest",
   timeoutMs: 2000,
   ttlSeconds: 60,
   ...over,
@@ -355,6 +354,17 @@ describe("runPrediction", () => {
     expect(status).toBe(503);
   });
 
+  it("leaves the model to advocaat unless one was asked for", async () => {
+    // Through the AI Gateway a bare name gets a `typesafe-ai/` prefix, so overriding the
+    // default with `jev-latest` would ask for `typesafe-ai/jev-latest`, which does not exist.
+    // Letting advocaat choose gives `jev-latest` directly and `typesafe-ai/jev` on the gateway.
+    await runPrediction(state(), deps());
+    expect(mock.requests[0]!.model).toBe("jev-latest");
+
+    await runPrediction(state(), deps({ model: "jev-2" }));
+    expect(mock.requests[1]!.model).toBe("jev-2");
+  });
+
   it("returns 503 without ever calling out when there is no key", async () => {
     const { status } = await runPrediction(state(), deps({ apiKey: "" }));
     expect(status).toBe(503);
@@ -377,18 +387,28 @@ describe("runPrediction", () => {
 });
 
 describe("live smoke test", () => {
-  const key = process.env.TYPESAFE_API_KEY;
+  // `TYPESAFE_API_KEY` is a direct key; `AI_GATEWAY_API_KEY` is a Vercel AI Gateway one.
+  const direct = process.env.TYPESAFE_API_KEY;
+  const gateway = process.env.AI_GATEWAY_API_KEY;
+  const key = direct || gateway;
+  const provider = !direct && gateway ? ("vercel" as const) : undefined;
+
   it.skipIf(!key)(
-    "asks the real Jev and gets ids back",
+    "asks the real Jev and gets our own ids back",
     async () => {
-      const { status, prediction } = await runPrediction(
+      const { status, prediction, reason } = await runPrediction(
         state(),
-        deps({ apiKey: key!, baseURL: undefined, timeoutMs: 10_000 }),
+        deps({ apiKey: key!, baseURL: undefined, model: undefined, provider, timeoutMs: 20_000 }),
       );
+      expect(reason ?? "ok").toBe("ok");
       expect(status).toBe(200);
       expect(prediction.ranks.length).toBeGreaterThan(0);
+      // The whole containment story: it can only answer with ids the server wrote.
       for (const rank of prediction.ranks) expect(["l0", "l1"]).toContain(rank.id);
+      expect(prediction.soon).toBeGreaterThanOrEqual(0);
+      expect(prediction.soon).toBeLessThanOrEqual(1);
+      expect(prediction.usage!.input).toBeGreaterThan(0);
     },
-    15_000,
+    30_000,
   );
 });
