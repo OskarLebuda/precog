@@ -79,6 +79,14 @@ export interface PrecogCandidate {
   hint?: boolean;
 }
 
+/** A candidate plus the client-only fields the effectors need. Never sent to the server. */
+export interface PrecogLink extends PrecogCandidate {
+  /** Absolute same-origin URL to speculate. */
+  href: string;
+  /** True for `target="_blank"`, which may be prefetched but never prerendered. */
+  blank: boolean;
+}
+
 export interface PrecogPageContext {
   path: string;
   title: string;

@@ -7,6 +7,7 @@ export default defineConfig({
       provider: "v8",
       include: ["src/runtime/core/**", "src/runtime/server/utils/**"],
       reporter: ["text", "json-summary"],
+      thresholds: { statements: 90, branches: 90, functions: 90, lines: 90 },
     },
   },
 });
