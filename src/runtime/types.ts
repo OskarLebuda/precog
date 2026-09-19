@@ -58,6 +58,7 @@ export interface PrecogPublicOptions {
   exclude: string[];
   privacy: PrecogPrivacy;
   overlay: boolean;
+  takeOverNuxtLinkPrefetch: boolean;
   documentNavigation: boolean;
   /** Prices for the overlay's cost estimate, in dollars per million tokens. */
   pricing?: { inputPerMillion: number; outputPerMillion: number };

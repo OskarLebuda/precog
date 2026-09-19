@@ -35,3 +35,10 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
   runs the `precog:predict` hook, then calls Jev through advocaat's `typesafe()` client. Any
   failure is a 503 with an empty prediction. `test/mock-typesafe.ts` stands in for the real API
   so the suite runs offline; the live smoke test is skipped without `TYPESAFE_API_KEY`.
+- M3 client: the orchestrator collects candidates, watches scroll and pointer, asks the server
+  with one request in flight at a time, and writes one `<script type="speculationrules">`.
+  Playwright drives real Chrome against the built playground; `e2e/spa-vs-document.spec.ts`
+  is the measurement behind the two-effector design.
+- M4 Nuxt integration: `preloadPayload` and `preloadRouteComponents` for the chosen routes,
+  `takeOverNuxtLinkPrefetch`, `definePageMeta({ precog: false })`, `usePrecog()`, and the
+  `precog:decision` and `precog:metrics` client hooks.

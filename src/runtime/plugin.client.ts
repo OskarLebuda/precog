@@ -1,4 +1,10 @@
-import { defineNuxtPlugin, useRouter, useRuntimeConfig } from "#app";
+import {
+  defineNuxtPlugin,
+  preloadPayload,
+  preloadRouteComponents,
+  useRouter,
+  useRuntimeConfig,
+} from "#app";
 import { Precog } from "./core/orchestrator.ts";
 import type { PrecogPrediction, PrecogPublicOptions } from "./types.ts";
 
@@ -28,6 +34,17 @@ export default defineNuxtPlugin({
         } catch {
           // Fail open: the orchestrator applies the fallback and the page is untouched.
           return null;
+        }
+      },
+      // Effector B: warm what the client router will actually need for an in-app navigation.
+      preload: (urls) => {
+        for (const url of urls) {
+          const { pathname, search } = new URL(url);
+          const path = pathname + search;
+          // `preloadPayload` checks for itself whether the route has a payload to load.
+          void preloadPayload(path).catch(() => {});
+          // Route chunks only exist in a build, which is what Nuxt's own link does too.
+          if (!import.meta.dev) void preloadRouteComponents(path, router).catch(() => {});
         }
       },
       emitDecision: (plan, trigger) => nuxtApp.callHook("precog:decision", plan, trigger),

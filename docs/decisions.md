@@ -75,3 +75,21 @@ benchmark in M7 has to measure pages that do fetch data, or the numbers mean not
 The bundled Chromium build could not be downloaded in this environment, and Speculation Rules
 are a Chromium feature anyway. The e2e project uses `channel: "chrome"`, which also means the
 tests exercise the shipping implementation rather than a build ahead of it.
+
+## Effector B warms payloads, and that is where the SPA win comes from
+
+Measured in `e2e/navigation-time.spec.ts`, on a link throttled to 400 ms of latency and
+750 kbit/s: navigating to a prerendered docs page takes about 860 ms cold and about 70 ms when
+precog warmed it. The saving is the payload round trip, not the route chunk.
+
+This only applies to routes that have a payload, which means prerendered routes with
+`experimental.payloadExtraction`. On a purely server-rendered route there is no payload to
+warm, and `preloadRouteComponents` alone saves very little, because the chunk is small and
+often already loaded. The README says this plainly rather than implying every site gets 10x.
+
+## `takeOverNuxtLinkPrefetch` keeps prefetch on interaction
+
+`NuxtLink` prefetches every link that enters the viewport. Turning it off wholesale would make
+precog strictly worse whenever the model is wrong. The option therefore sets
+`prefetchOn: { visibility: false, interaction: true }`: precog handles the ahead-of-hover case,
+and a hover on any link still warms it as a safety net.

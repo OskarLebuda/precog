@@ -4,6 +4,7 @@
       <NuxtLink to="/">nuxt-precog</NuxtLink>
       <nav>
         <NuxtLink to="/blog">Blog</NuxtLink>
+        <NuxtLink to="/docs">Docs</NuxtLink>
         <NuxtLink to="/shop">Shop</NuxtLink>
         <NuxtLink to="/quiet">Quiet page</NuxtLink>
       </nav>

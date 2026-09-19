@@ -47,6 +47,11 @@ export interface ModuleOptions {
   privacy: PrecogPrivacy;
   /** Mount the debug overlay always, never, or only in development. */
   overlay: PrecogOverlay;
+  /**
+   * Turn off `NuxtLink`'s blanket viewport prefetch and let precog choose instead. Prefetch
+   * on interaction stays on, so hovering a link the model did not rank still warms it.
+   */
+  takeOverNuxtLinkPrefetch: boolean;
   /** Experimental: render internal links as document navigations so prerender fully applies. */
   documentNavigation: boolean;
   /** Prices for the overlay's cost estimate. Unset means the overlay shows tokens only. */
@@ -80,6 +85,7 @@ const defaults: ModuleOptions = {
     requireConsent: false,
   },
   overlay: "dev",
+  takeOverNuxtLinkPrefetch: false,
   documentNavigation: false,
   pricing: undefined,
 };
@@ -111,6 +117,7 @@ export default defineNuxtModule<ModuleOptions>({
       exclude: options.exclude,
       privacy: options.privacy,
       overlay,
+      takeOverNuxtLinkPrefetch: options.takeOverNuxtLinkPrefetch,
       documentNavigation: options.documentNavigation,
       ...(options.pricing ? { pricing: options.pricing } : {}),
     };
@@ -136,6 +143,13 @@ export default defineNuxtModule<ModuleOptions>({
         exclude: options.exclude,
       },
     );
+
+    if (options.takeOverNuxtLinkPrefetch) {
+      const defaults = (nuxt.options.experimental.defaults ??= {} as never);
+      const link = (defaults.nuxtLink ??= {});
+      link.prefetch = true;
+      link.prefetchOn = { ...link.prefetchOn, visibility: false, interaction: true };
+    }
 
     addServerHandler({
       route: options.endpoint,
