@@ -16,11 +16,16 @@ First release.
   `precog:predict` and `precog:predicted` hooks.
 - `usePrecog()`, `definePageMeta({ precog: false })`, `data-precog="off"` and
   `data-precog="hint"`, and the `precog:decision` and `precog:metrics` client hooks.
-- A probability overlay and HUD, plus a DevTools tab. Neither ships in a production build with
-  the default `overlay: 'dev'`.
+- A probability overlay and HUD, which do not ship in a production build with the default
+  `overlay: 'dev'`.
+- A Nuxt DevTools tab with the metrics, the current plan, the ranking and controls that drive
+  the module in the page.
 - `takeOverNuxtLinkPrefetch` to replace `NuxtLink`'s blanket viewport prefetch.
 - Experimental `documentNavigation`.
-- A playground that runs without an API key, a benchmark harness, and a recording script.
+- A playground that runs without an API key, a benchmark harness, and a recording script that
+  captures at 60 fps with a visible mouse pointer.
+- Documentation at <https://oskarlebuda.github.io/nuxt-precog>.
+- Published from GitHub Actions with npm trusted publishing, so there is no token anywhere.
 
 ### Known limits
 
