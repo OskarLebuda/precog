@@ -27,8 +27,7 @@
     }
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "prepack": "nuxt-module-build build && pnpm client:build",
@@ -45,7 +44,7 @@
     "bench": "node bench/run.mjs",
     "typecheck": "nuxt-module-build prepare && tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
+    "release": "pnpm check && pnpm build && changelogen --release && git push --follow-tags",
     "check:treeshake": "node scripts/check-treeshake.mjs",
     "record": "node scripts/record.mjs",
     "client:build": "nuxt generate client",
@@ -78,10 +77,5 @@
     "vue": "^3.5.0",
     "vue-tsc": "^3.3.11"
   },
-  "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "^10"
-    }
-  }
+  "packageManager": "pnpm@10.28.0"
 }

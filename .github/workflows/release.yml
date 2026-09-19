@@ -2,10 +2,11 @@ name: release
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: read
-  # Required for npm provenance.
+  # The only credential this workflow uses. There is no npm token anywhere.
   id-token: write
 
 jobs:
@@ -16,12 +17,15 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
           registry-url: https://registry.npmjs.org
+      # Trusted publishing needs npm 11.5.1 or newer; Node 24 ships close, so pin it.
+      - run: npm install --global npm@latest
       - run: pnpm install --frozen-lockfile
       - run: pnpm dev:prepare
       - run: pnpm check
-      - run: pnpm publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm build
+      # No NODE_AUTH_TOKEN: the OIDC id-token is the credential, and npm attaches build
+      # provenance by itself. Scripts are skipped because the build already ran above.
+      - run: npm publish --ignore-scripts
