@@ -1,4 +1,4 @@
-import { addPlugin, createResolver, defineNuxtModule } from "@nuxt/kit";
+import { addPlugin, addServerHandler, createResolver, defineNuxtModule } from "@nuxt/kit";
 import { defu } from "defu";
 import type {
   PrecogBudget,
@@ -121,8 +121,16 @@ export default defineNuxtModule<ModuleOptions>({
         cache: options.cache,
         privacy: options.privacy,
         budget: options.budget,
+        include: options.include,
+        exclude: options.exclude,
       },
     );
+
+    addServerHandler({
+      route: options.endpoint,
+      method: "post",
+      handler: resolver.resolve("./runtime/server/handlers/predict.post.ts"),
+    });
 
     addPlugin({ src: resolver.resolve("./runtime/plugin.client.ts"), mode: "client" });
   },

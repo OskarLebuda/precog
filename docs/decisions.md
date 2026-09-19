@@ -26,3 +26,22 @@ can check a returned id with one bounds test as well as a set lookup.
 Chrome cancels a prerender as soon as its URL leaves the rule set. A probability that wobbles
 around the threshold would cancel and restart the same load. An active speculation therefore
 keeps its slot while it stays above three quarters of its threshold.
+
+## advocaat's client, not `ask()`, on the server
+
+The plan called for `ask(state, questions, options)`. `ask()` drops the `usage` field that the
+System One response carries, and the overlay needs token counts for its cost estimate. The
+questions are still authored with advocaat's `choice`, `score` and `chance` tags, then spread
+into plain question objects and sent through advocaat's `typesafe()` client, which returns
+`{ model, answers, usage }`. The score ratio that `ask()` would compute is one division.
+
+## Candidate ids must be the dense prefix
+
+The server rejects a body whose candidate `id` is not exactly `l<index>`. That makes the
+subset check on the way back a formality rather than the only line of defence: an id Jev
+returns is either one the server itself wrote into the request, or it is dropped.
+
+## Rate limiting runs before the cache
+
+A cached answer is cheap but not free, and the limit is there to protect the endpoint as well
+as the Jev bill. Calls are counted before the cache is consulted.

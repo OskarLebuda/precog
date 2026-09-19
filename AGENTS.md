@@ -30,3 +30,8 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 ## Status
 
 - M0 scaffold: module registered, options and run-time config in place, no-op client plugin.
+- M1 core: `match`, `candidates`, `state`, `policy`, `rules` are pure and fully unit tested.
+- M2 server: `POST {endpoint}` validates the body, rate limits per IP, caches in Nitro storage,
+  runs the `precog:predict` hook, then calls Jev through advocaat's `typesafe()` client. Any
+  failure is a 503 with an empty prediction. `test/mock-typesafe.ts` stands in for the real API
+  so the suite runs offline; the live smoke test is skipped without `TYPESAFE_API_KEY`.
