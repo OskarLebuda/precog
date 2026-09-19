@@ -98,12 +98,21 @@ One request per prediction, three questions, evaluated in parallel:
 | `soon` | score over four levels                    | How soon will the visitor open another page?              |
 | `exit` | yes/no                                    | Will the visitor leave the site entirely instead?         |
 
-```
-collect links + signals  --POST-->  validate, rate limit, cache  --> Jev
-                         <--------  [{ id, p }], soon, exit
-policy (thresholds, budgets, guards)
-  |-> <script type="speculationrules">   for document navigations
-  |-> preloadPayload / preloadRouteComponents   for in-app navigations
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant N as Your Nitro server
+    participant J as TypeSafe Jev
+
+    Note over B: collect candidate links,<br/>watch scroll and pointer
+    B->>N: POST state, one request in flight
+    N->>N: validate, rate limit, look in cache
+    N->>J: one request, three questions
+    J-->>N: next, soon, exit
+    N-->>B: ids and probabilities
+    Note over B: policy: thresholds, budgets, guards
+    B->>B: effector A, speculation rules, for document navigations
+    B->>B: effector B, Nuxt preloading, for in-app navigations
 ```
 
 The short version of the important part: **a `NuxtLink` click is not a document navigation**,

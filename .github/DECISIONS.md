@@ -267,17 +267,21 @@ button rendered invisible and every accent went grey. `emerald` (`#00d492`) is t
 closest to Nuxt green, so that is what the site uses. The og-image handler does take a hex,
 which is why the value looked like it worked.
 
-## Mermaid on the site, ASCII in the README
+## Mermaid for the flow, themed differently in each place
 
-undocs ships mermaid and turns a ` ```mermaid ` fence into its `<Mermaid>` component, so
-"How it works" uses a sequence diagram: the round trip to Jev is the thing worth showing, and a
-sequence diagram lays it out far better than the flowchart it replaced.
+undocs ships mermaid and turns a ` ```mermaid ` fence into its `<Mermaid>` component, and
+GitHub renders the same fence natively. Both the README and "How it works" use a sequence
+diagram: the round trip to Jev is the thing worth showing, and a sequence diagram lays it out
+far better than the flowchart it replaced.
 
-It is themed from inside the diagram, because undocs renders mermaid with its defaults and does
-not follow the colour mode. The default theme put a pale yellow box on a near-black page. The
-diagram sets `theme: base` with transparent fills, `#6b7280` for strokes and text, which is
-legible on both white and near-black, and Nuxt emerald on the note borders. Checked in both
-modes rather than assumed.
+The two are themed differently on purpose:
 
-The README keeps its ASCII diagram on purpose: it is also the npm page, and npm does not render
-mermaid.
+- **The docs site** sets `theme: base` inside the diagram, because undocs renders mermaid with
+  its defaults and does not follow the colour mode, which put a pale yellow box on a near-black
+  page. Transparent fills, `#6b7280` for strokes and text (legible on white and on near-black),
+  Nuxt emerald on the note borders. Checked in both modes rather than assumed.
+- **The README** carries no config at all, because GitHub themes mermaid to match the reader's
+  own light or dark setting, and a hard-coded palette would override that.
+
+One cost worth knowing: npm does not render mermaid, so on the package page that block shows as
+its source. The diagram is short enough to still read as text.
