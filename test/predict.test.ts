@@ -271,6 +271,77 @@ describe("runPrediction", () => {
     expect(mock.requests).toHaveLength(1);
   });
 
+  it("tells the caller why it failed", async () => {
+    mock.options = { status: 500 };
+    const { reason } = await runPrediction(state(), deps());
+    expect(reason).toContain("500");
+    expect(reason).not.toContain("test-key");
+  });
+
+  it("reports every fresh prediction to the precog:predicted hook", async () => {
+    const seen: Array<{ path: string; substituted: boolean; ranks: number }> = [];
+    const afterHook = (ctx: {
+      state: PrecogState;
+      prediction: { ranks: unknown[] };
+      substituted: boolean;
+    }) => {
+      seen.push({
+        path: ctx.state.page.path,
+        substituted: ctx.substituted,
+        ranks: ctx.prediction.ranks.length,
+      });
+    };
+
+    await runPrediction(state(), deps({ afterHook }));
+    await runPrediction(
+      state(),
+      deps({
+        afterHook,
+        hook: (ctx) => {
+          ctx.prediction = {
+            ranks: [{ id: "l0", p: 0.5 }],
+            soon: 1,
+            exit: 0,
+            cached: false,
+            latencyMs: 0,
+          };
+        },
+      }),
+    );
+
+    expect(seen).toEqual([
+      { path: "/blog", substituted: false, ranks: 2 },
+      { path: "/blog", substituted: true, ranks: 1 },
+    ]);
+  });
+
+  it("does not let a precog:predicted listener spoil a good prediction", async () => {
+    const { status, prediction } = await runPrediction(
+      state(),
+      deps({
+        afterHook: () => {
+          throw new Error("recording failed");
+        },
+      }),
+    );
+    expect(status).toBe(200);
+    expect(prediction.ranks.length).toBeGreaterThan(0);
+  });
+
+  it("fails open when a precog:predict listener throws", async () => {
+    const { status, reason } = await runPrediction(
+      state(),
+      deps({
+        hook: () => {
+          throw new Error("hook exploded");
+        },
+      }),
+    );
+    expect(status).toBe(503);
+    expect(reason).toContain("hook exploded");
+    expect(mock.requests).toHaveLength(0);
+  });
+
   it("returns 503 and an empty prediction when Jev fails", async () => {
     mock.options = { status: 500 };
     const { status, prediction } = await runPrediction(state(), deps());

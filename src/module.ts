@@ -2,7 +2,6 @@ import {
   addImports,
   addPlugin,
   addServerHandler,
-  addTypeTemplate,
   createResolver,
   defineNuxtModule,
 } from "@nuxt/kit";

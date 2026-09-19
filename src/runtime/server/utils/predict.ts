@@ -47,6 +47,8 @@ export interface PredictDeps {
 export interface PredictResult {
   status: number;
   prediction: PrecogPrediction;
+  /** Why the call failed, for the `x-precog-reason` header. Absent on success. */
+  reason?: string;
 }
 
 const EMPTY: PrecogPrediction = {
@@ -124,16 +126,18 @@ export async function runPrediction(state: PrecogState, deps: PredictDeps): Prom
 
   if (deps.hook) {
     const ctx: PredictHookContext = { state, prediction: null };
-    await deps.hook(ctx);
+    // A listener that throws must not cost the visitor their prediction.
+    const failed = await settle(() => deps.hook!(ctx));
+    if (failed) return { status: 503, prediction: EMPTY, reason: failed };
     if (ctx.prediction) {
       const prediction = { ...ctx.prediction, cached: false };
       await writeCache(deps.storage, key, prediction, deps.ttlSeconds);
-      await deps.afterHook?.({ state, prediction, substituted: true });
+      await settle(() => deps.afterHook?.({ state, prediction, substituted: true }));
       return { status: 200, prediction };
     }
   }
 
-  if (!deps.apiKey) return { status: 503, prediction: EMPTY };
+  if (!deps.apiKey) return { status: 503, prediction: EMPTY, reason: "no api key" };
 
   const started = now();
   try {
@@ -165,9 +169,35 @@ export async function runPrediction(state: PrecogState, deps: PredictDeps): Prom
       },
     };
     await writeCache(deps.storage, key, prediction, deps.ttlSeconds);
-    await deps.afterHook?.({ state, prediction, substituted: false });
+    // `precog:predicted` only observes. Whatever it does, the answer is already good.
+    await settle(() => deps.afterHook?.({ state, prediction, substituted: false }));
     return { status: 200, prediction };
-  } catch {
-    return { status: 503, prediction: { ...EMPTY, latencyMs: now() - started } };
+  } catch (error) {
+    // Swallowed on purpose: the client falls open. The reason goes out as a header so a
+    // misconfigured endpoint is not invisible.
+    return {
+      status: 503,
+      prediction: { ...EMPTY, latencyMs: now() - started },
+      reason: describe(error),
+    };
   }
+}
+
+/** Runs a listener and returns why it failed, or nothing when it did not. */
+async function settle(run: () => unknown): Promise<string | undefined> {
+  try {
+    await run();
+    return undefined;
+  } catch (error) {
+    return describe(error);
+  }
+}
+
+/** A short, safe description of a failure. Never the request body or the key. */
+function describe(error: unknown): string {
+  if (error instanceof Error) {
+    const status = (error as { status?: number }).status;
+    return `${error.name}${status ? ` ${status}` : ""}: ${error.message}`.slice(0, 200);
+  }
+  return "unknown error";
 }

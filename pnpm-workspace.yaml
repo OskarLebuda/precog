@@ -1,13 +1,16 @@
-# https://pnpm.io/settings
-
 packages:
   - playground
   - bench
   - docs
 
-# Always use the local module, never the registry.
+dedupePeers: true
+
+ignoreWorkspaceRootCheck: true
+
+onlyBuiltDependencies:
+  - "@parcel/watcher"
+  - esbuild
+  - vue-demi
+
 overrides:
   nuxt-precog: link:.
-
-dedupePeers: true
-ignoreWorkspaceRootCheck: true

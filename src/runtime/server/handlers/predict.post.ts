@@ -92,7 +92,7 @@ export default defineEventHandler(async (event): Promise<PrecogPrediction> => {
   const hooks = nitro.hooks as unknown as {
     callHook: (name: string, ctx: unknown) => Promise<void>;
   };
-  const { status, prediction } = await runPrediction(validation.state, {
+  const { status, prediction, reason } = await runPrediction(validation.state, {
     // `NUXT_PRECOG_API_KEY` is handled by Nuxt; `TYPESAFE_API_KEY` is advocaat's own name.
     apiKey: config.apiKey || readEnv("TYPESAFE_API_KEY") || "",
     baseURL: config.baseURL || readEnv("TYPESAFE_BASE_URL") || undefined,
@@ -100,10 +100,8 @@ export default defineEventHandler(async (event): Promise<PrecogPrediction> => {
     timeoutMs: config.timeoutMs,
     ttlSeconds: config.cache.ttlSeconds,
     storage: useStorage("cache") as unknown as PredictStorage,
-    hook: (ctx: PredictHookContext) =>
-      (
-        nitro.hooks as unknown as { callHook: (name: string, ctx: unknown) => Promise<void> }
-      ).callHook("precog:predict", ctx),
+    hook: (ctx: PredictHookContext) => hooks.callHook("precog:predict", ctx),
+    afterHook: (ctx: PredictedHookContext) => hooks.callHook("precog:predicted", ctx),
   });
 
   setResponseHeader(
@@ -113,6 +111,9 @@ export default defineEventHandler(async (event): Promise<PrecogPrediction> => {
   );
   // Predictions are for this visitor at this moment and must never be shared or stored.
   setResponseHeader(event, "cache-control", "no-store");
-  if (status !== 200) setResponseStatus(event, status);
+  if (status !== 200) {
+    setResponseStatus(event, status);
+    if (reason) setResponseHeader(event, "x-precog-reason", reason);
+  }
   return prediction;
 });

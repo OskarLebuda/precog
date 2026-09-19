@@ -1,4 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineNitroPlugin } from "nitropack/runtime";
 import type { PrecogPrediction, PrecogState } from "nuxt-precog";
 
@@ -12,7 +13,9 @@ import type { PrecogPrediction, PrecogState } from "nuxt-precog";
  *
  * `PRECOG_MOCK=0` turns replay and the stand-in off, so the playground talks to the real Jev.
  */
-const FILE = new URL("../../recordings.json", import.meta.url);
+// Resolved from the working directory, because `import.meta.url` points inside the bundle
+// once the playground is built.
+const FILE = resolve(process.cwd(), "playground/recordings.json");
 
 /** The page and its link set, which is what a prediction is really about. */
 function keyOf(state: PrecogState) {
@@ -70,7 +73,11 @@ export default defineNitroPlugin((nitro) => {
     nitro.hooks.hook("precog:predicted", (ctx) => {
       if (ctx.substituted) return;
       recordings[keyOf(ctx.state)] = ctx.prediction;
-      writeFileSync(FILE, `${JSON.stringify(recordings, null, 2)}\n`);
+      try {
+        writeFileSync(FILE, `${JSON.stringify(recordings, null, 2)}\n`);
+      } catch (error) {
+        console.warn(`[precog] could not write ${FILE}:`, error);
+      }
     });
   }
 
