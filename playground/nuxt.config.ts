@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     // The demo's mock spreads probability thinly over many links, so the bars are lower
     // than the defaults expect.
     thresholds: { prefetch: 0.06, prerender: 0.25 },
-    overlay: true,
+    // `PRECOG_OVERLAY=dev` builds the playground the way a real production build looks.
+    overlay: process.env.PRECOG_OVERLAY === "dev" ? "dev" : true,
     takeOverNuxtLinkPrefetch: true,
   },
 });

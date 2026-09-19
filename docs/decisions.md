@@ -93,3 +93,16 @@ often already loaded. The README says this plainly rather than implying every si
 precog strictly worse whenever the model is wrong. The option therefore sets
 `prefetchOn: { visibility: false, interaction: true }`: precog handles the ahead-of-hover case,
 and a hover on any link still warms it as a safety net.
+
+## The cost line says "no prices configured" by default
+
+TypeSafe does not publish prices anywhere the docs link to, so the module has no honest
+default to multiply tokens by. The HUD shows token counts always and a dollar figure only when
+`precog.pricing` is set, labelled as an estimate.
+
+## The DevTools tab talks over a BroadcastChannel
+
+A custom DevTools tab renders in its own iframe, so it cannot read the page's state directly.
+The overlay plugin posts every decision and metrics update to a `BroadcastChannel("precog")`
+and the tab listens. That keeps the orchestrator free of DevTools code, and the tab is a
+single static HTML page served by a handler that only exists in development.

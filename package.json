@@ -41,15 +41,16 @@
     "bench": "node bench/run.mjs",
     "typecheck": "nuxt-module-build prepare && tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags"
+    "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
+    "check:treeshake": "node scripts/check-treeshake.mjs"
   },
   "dependencies": {
+    "@nuxt/devtools-kit": "^3.4.2",
     "@nuxt/kit": "^4.5.2",
     "advocaat": "^0.0.6",
     "defu": "^6.1.4"
   },
   "devDependencies": {
-    "@nuxt/devtools-kit": "^4.0.0-beta.1",
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.5.2",
     "@nuxt/test-utils": "^4.3.2",

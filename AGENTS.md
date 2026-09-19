@@ -42,3 +42,6 @@ exactly that navigation with the Speculation Rules API and Nuxt's own preloading
 - M4 Nuxt integration: `preloadPayload` and `preloadRouteComponents` for the chosen routes,
   `takeOverNuxtLinkPrefetch`, `definePageMeta({ precog: false })`, `usePrecog()`, and the
   `precog:decision` and `precog:metrics` client hooks.
+- M5 overlay: `?precog=debug` or Shift+P shows probability badges and a HUD. Registered only
+  when `overlay` resolves true, so `overlay: "dev"` leaves nothing in a production build
+  (`pnpm check:treeshake`). The DevTools tab is a dev-only iframe fed over a BroadcastChannel.

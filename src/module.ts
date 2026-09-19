@@ -7,6 +7,7 @@ import {
   defineNuxtModule,
 } from "@nuxt/kit";
 import { defu } from "defu";
+import { DEVTOOLS_ROUTE, setupDevtools } from "./devtools.ts";
 import type {
   PrecogBudget,
   PrecogCacheOptions,
@@ -164,5 +165,19 @@ export default defineNuxtModule<ModuleOptions>({
     });
 
     addPlugin({ src: resolver.resolve("./runtime/plugin.client.ts"), mode: "client" });
+
+    // Registered only when the overlay is on, so a production build never sees the component.
+    if (overlay) {
+      addPlugin({ src: resolver.resolve("./runtime/plugin.overlay.client.ts"), mode: "client" });
+    }
+
+    if (nuxt.options.dev) {
+      addServerHandler({
+        route: DEVTOOLS_ROUTE,
+        method: "get",
+        handler: resolver.resolve("./runtime/server/handlers/devtools.get.ts"),
+      });
+      setupDevtools(nuxt);
+    }
   },
 });
