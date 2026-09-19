@@ -198,3 +198,15 @@ Speculation rules and preloading are tested against the production build; DevToo
 in a dev server. Playwright therefore starts both, and the `devtools` project points at the dev
 one. `pnpm test:e2e` builds the module and the tab client first, because without `dist/client`
 the tab falls back to proxying a dev server that is not running.
+
+## The recording is captured at 60 fps, not with Playwright's recorder
+
+Playwright's `recordVideo` writes roughly 25 fps and the rate cannot be configured. The clip is
+now captured through the Chrome DevTools protocol instead: `Page.screencastFrame` delivers a
+frame on every repaint with a timestamp, the frames are written out with their real durations,
+and ffmpeg resamples them to a constant 60 fps. Motion is smooth and the timing stays true.
+
+Chrome does not draw the mouse pointer into a captured frame, so the recording injects one
+built from the mouse events, with a press state and a ripple on click. The ripple is positioned
+with `left` and `top` rather than a transform, because its keyframes own the transform and
+would otherwise drop the translation and animate from the corner.

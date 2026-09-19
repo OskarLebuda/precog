@@ -1,19 +1,23 @@
 /**
  * Records the launch clip: the same visit twice, once with the module off and once with it on,
- * against a server with 400 ms of artificial latency. Writes two videos, and stitches them
- * side by side when ffmpeg is available.
+ * over a throttled connection. Captured at a real 60 frames per second with a visible mouse
+ * pointer, then stitched side by side.
  *
- * Usage: pnpm dev:build && node scripts/record.mjs
+ * Usage: pnpm dev:build && pnpm record
  */
 import { execFileSync, spawn } from "node:child_process";
-import { mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
+import { installCursor } from "./cursor.mjs";
+import { FPS, startScreencast } from "./screencast.mjs";
 
 const PORT = Number(process.env.PRECOG_RECORD_PORT ?? 3210);
 const BASE = `http://127.0.0.1:${PORT}`;
 const OUT = "bench/results";
-const DELAY_MS = 400;
+const HOPS = 5;
+const VIEWPORT = { width: 900, height: 820 };
+
 /**
  * The docs pages are prerendered, so they are served as static files and the server delay
  * middleware never sees them. Throttling the browser is what makes the wait real.
@@ -24,13 +28,11 @@ const CONDITIONS = {
   downloadThroughput: (1500 * 1024) / 8,
   uploadThroughput: (750 * 1024) / 8,
 };
-const HOPS = 5;
-const VIEWPORT = { width: 900, height: 820 };
 
 /**
- * The same visit in both arms. The cursor travels to each link and clicks soon after
+ * The same visit in both arms. The cursor travels to each link and clicks shortly after
  * arriving, which is what a reader actually does. A long hover would let the browser's own
- * prefetch-on-interaction finish and there would be nothing to compare.
+ * prefetch finish and there would be nothing to compare.
  */
 const DWELL_MS = 150;
 
@@ -78,32 +80,29 @@ async function drive(page, overlay, timings) {
 }
 
 async function record(label, mode) {
-  const dir = join(OUT, `raw-${label}`);
-  rmSync(dir, { recursive: true, force: true });
   const browser = await chromium.launch({ channel: "chrome" });
-  const context = await browser.newContext({
-    viewport: VIEWPORT,
-    recordVideo: { dir, size: VIEWPORT },
-  });
-  await context.addCookies([
-    { name: "precog_delay", value: String(DELAY_MS), url: BASE },
-    { name: "precog_mode", value: mode, url: BASE },
-  ]);
+  const context = await browser.newContext({ viewport: VIEWPORT });
+  await context.addCookies([{ name: "precog_mode", value: mode, url: BASE }]);
+  await context.addInitScript(installCursor);
+
   const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.emulateNetworkConditions", CONDITIONS);
+
+  const output = join(OUT, `${label}.mp4`);
+  const cast = await startScreencast(page, join(OUT, `frames-${label}`), VIEWPORT);
+
   const timings = [];
   await drive(page, mode === "precog", timings);
-  console.log(`${label}: navigations took ${timings.join(", ")} ms`);
+  const { frames, seconds } = await cast.stop(output);
+
   await context.close();
   await browser.close();
-
-  const file = readdirSync(dir).find((name) => name.endsWith(".webm"));
-  const target = join(OUT, `${label}.webm`);
-  rmSync(target, { force: true });
-  renameSync(join(dir, file), target);
-  rmSync(dir, { recursive: true, force: true });
-  return target;
+  console.log(
+    `${label}: ${timings.join(", ")} ms per navigation, ` +
+      `${frames} frames over ${seconds.toFixed(1)}s`,
+  );
+  return output;
 }
 
 function duration(file) {
@@ -128,6 +127,11 @@ function has(command) {
   }
 }
 
+if (!has("ffmpeg") || !has("ffprobe")) {
+  console.error("ffmpeg and ffprobe are needed to assemble the frames.");
+  process.exit(1);
+}
+
 const server = spawn("node", ["playground/.output/server/index.mjs"], {
   env: { ...process.env, PORT: String(PORT), NITRO_PORT: String(PORT) },
   stdio: "ignore",
@@ -146,36 +150,39 @@ try {
 
   const off = await record("off", "off");
   const on = await record("precog", "precog");
-  console.log(`Wrote ${off} and ${on}.`);
 
-  if (has("ffmpeg") && has("ffprobe")) {
-    const combined = join(OUT, "precog-demo.mp4");
-    // The precog arm finishes sooner, so both sides are frozen on their last frame and the
-    // clip runs for as long as the slower one took. That gap is the whole point.
-    const longest = Math.max(duration(off), duration(on));
-    execFileSync(
-      "ffmpeg",
-      [
-        "-y",
-        "-i",
-        off,
-        "-i",
-        on,
-        "-filter_complex",
-        "[0:v]tpad=stop_mode=clone:stop_duration=30,pad=iw+2:ih:0:0:color=black[l];" +
-          "[1:v]tpad=stop_mode=clone:stop_duration=30[r];[l][r]hstack=inputs=2",
-        "-t",
-        longest.toFixed(2),
-        "-pix_fmt",
-        "yuv420p",
-        combined,
-      ],
-      { stdio: "inherit" },
-    );
-    console.log(`Wrote ${combined}. Left is off, right is precog; the control panel labels both.`);
-  } else {
-    console.log("ffmpeg not found, so the two clips were not stitched together.");
-  }
+  const combined = join(OUT, "precog-demo.mp4");
+  // The precog arm finishes sooner, so both sides are frozen on their last frame and the
+  // clip runs for as long as the slower one took. That gap is the whole point.
+  const longest = Math.max(duration(off), duration(on));
+  execFileSync(
+    "ffmpeg",
+    [
+      "-y",
+      "-i",
+      off,
+      "-i",
+      on,
+      "-filter_complex",
+      "[0:v]tpad=stop_mode=clone:stop_duration=30,pad=iw+2:ih:0:0:color=black[l];" +
+        "[1:v]tpad=stop_mode=clone:stop_duration=30[r];[l][r]hstack=inputs=2",
+      "-t",
+      longest.toFixed(2),
+      "-r",
+      String(FPS),
+      "-c:v",
+      "libx264",
+      "-crf",
+      "18",
+      "-preset",
+      "medium",
+      "-pix_fmt",
+      "yuv420p",
+      combined,
+    ],
+    { stdio: "ignore" },
+  );
+  console.log(`Wrote ${combined} at ${FPS} fps. Left is off, right is precog.`);
 } finally {
   server.kill();
 }
