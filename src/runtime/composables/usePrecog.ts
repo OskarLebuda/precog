@@ -4,7 +4,7 @@ import type { Precog } from "../core/orchestrator.ts";
 export interface UsePrecog {
   /** False while paused, or before consent when `privacy.requireConsent` is on. */
   readonly enabled: boolean;
-  /** Stops predicting and removes the speculation rules. */
+  /** Stops predicting and removes the speculation rules until `resume()`. */
   pause: () => void;
   resume: () => void;
   /** Predicts again now, ignoring `minIntervalMs`. */

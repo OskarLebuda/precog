@@ -56,7 +56,7 @@ export class Precog {
   readonly effector: SpeculationEffector;
   readonly supportsSpeculationRules = detectSupport();
 
-  /** False while paused or before consent. Nothing is collected or sent. */
+  /** False once `pause()` was called. Only `resume()` puts it back. */
   enabled = true;
   consent: boolean;
 
@@ -83,6 +83,7 @@ export class Precog {
   #domTimer: ReturnType<typeof setTimeout> | null = null;
   #observer: MutationObserver | null = null;
   #lastCallAt = 0;
+  #pageOptOut = false;
   #frame = 0;
   #listeners: Array<() => void> = [];
   #started = false;
@@ -127,15 +128,41 @@ export class Precog {
 
   pause() {
     this.enabled = false;
-    this.#cancelPending();
-    this.#controller?.abort();
-    this.effector.clear();
-    this.plan = null;
+    this.#stand();
   }
 
   resume() {
     this.enabled = true;
     this.schedule("manual");
+  }
+
+  /**
+   * `definePageMeta({ precog: false })`. Kept apart from `pause()` so leaving an opted-out
+   * page does not undo a `pause()` the application asked for.
+   */
+  setPageOptOut(optedOut: boolean) {
+    if (this.#pageOptOut === optedOut) return;
+    this.#pageOptOut = optedOut;
+    if (optedOut) this.#stand();
+    else this.schedule("manual");
+  }
+
+  /** Stops everything in flight and takes the rules back out of the document. */
+  #stand() {
+    this.#cancelPending();
+    this.#controller?.abort();
+    this.#clearPlan();
+  }
+
+  /**
+   * Drops the plan and says so. Listeners such as the overlay draw from the plan, and the
+   * links it names are gone or stale the moment the page changes.
+   */
+  #clearPlan() {
+    this.effector.clear();
+    if (!this.plan) return;
+    this.plan = null;
+    this.#deps.emitDecision?.({ decisions: [], prerender: [], prefetch: [] }, "route");
   }
 
   grantConsent() {
@@ -149,9 +176,8 @@ export class Precog {
     this.#history = this.#history.slice(-5);
     this.#enteredAt = this.#now();
     this.#scroll = { y: 0, t: this.#now(), velocity: 0 };
-    this.plan = null;
     this.prediction = null;
-    this.effector.clear();
+    this.#clearPlan();
     this.collect();
     this.schedule("route");
   }
@@ -401,6 +427,20 @@ export class Precog {
     ) as HTMLAnchorElement | null;
     if (!anchor) return;
     const speculated = new Set([...(this.plan?.prerender ?? []), ...(this.plan?.prefetch ?? [])]);
+
+    // Experimental: hand a prerendered link to the browser instead of the router, so the
+    // navigation is the activation of a document that is already painted.
+    if (
+      this.options.documentNavigation &&
+      this.plan?.prerender.includes(anchor.href) &&
+      !isModifiedClick(event) &&
+      anchor.target !== "_blank"
+    ) {
+      event.preventDefault();
+      event.stopPropagation();
+      location.href = anchor.href;
+    }
+
     const top = this.plan?.decisions.find((decision) => decision.action !== "none");
     const topHref = top ? this.links.find((link) => link.id === top.id)?.href : undefined;
     this.telemetry.record({
@@ -426,7 +466,9 @@ export class Precog {
   // --- helpers ---
 
   #active() {
-    return this.#started && this.enabled && this.consent && this.options.enabled;
+    return (
+      this.#started && this.enabled && !this.#pageOptOut && this.consent && this.options.enabled
+    );
   }
 
   #now() {
@@ -460,6 +502,11 @@ export class Precog {
     target.addEventListener(type, handler, options);
     this.#listeners.push(() => target.removeEventListener(type, handler, options));
   }
+}
+
+/** A click the visitor meant to open somewhere else, which must be left to the browser. */
+function isModifiedClick(event: MouseEvent) {
+  return event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
 }
 
 function isPrerendering() {

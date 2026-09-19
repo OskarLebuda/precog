@@ -10,6 +10,7 @@
       </nav>
     </header>
     <NuxtPage />
+    <ControlPanel />
   </div>
 </template>
 

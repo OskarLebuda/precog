@@ -106,3 +106,29 @@ A custom DevTools tab renders in its own iframe, so it cannot read the page's st
 The overlay plugin posts every decision and metrics update to a `BroadcastChannel("precog")`
 and the tab listens. That keeps the orchestrator free of DevTools code, and the tab is a
 single static HTML page served by a handler that only exists in development.
+
+## `pause()` is not undone by a navigation
+
+The router used to resume the module whenever it entered a page that had not opted out, which
+silently reversed a `usePrecog().pause()`. Page opt-out is now tracked separately from the
+application's own pause, so each only undoes itself. The playground's demo arms rely on this:
+they call `pause()` once and it stays paused across navigations.
+
+## The overlay clears when the page changes
+
+The plan names links on the page that was just left. Keeping it around after a navigation drew
+badges over unrelated paragraphs. The orchestrator now announces an empty plan on every route
+change, and the overlay empties with it.
+
+## Prerendering in the playground is scoped by hand
+
+`nitro.prerender.crawlLinks` followed the header links and turned the whole demo into static
+files, which meant the artificial latency middleware never ran and there was nothing to make
+faster. Crawling is off and the docs routes are listed explicitly.
+
+## `documentNavigation` gets a prefetch, not always a prerender
+
+Measured in `e2e/demo.spec.ts`: with the flag on, a click leaves the router out and the browser
+fetches the document itself, reporting `deliveryType: "navigational-prefetch"`. Chrome had not
+finished a prerender in the seconds the test allows, so the flag's promise is "a real document
+navigation that uses whatever the browser already has", not "always instant".

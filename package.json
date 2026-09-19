@@ -42,7 +42,8 @@
     "typecheck": "nuxt-module-build prepare && tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
-    "check:treeshake": "node scripts/check-treeshake.mjs"
+    "check:treeshake": "node scripts/check-treeshake.mjs",
+    "record": "node scripts/record.mjs"
   },
   "dependencies": {
     "@nuxt/devtools-kit": "^3.4.2",

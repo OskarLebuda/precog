@@ -53,16 +53,13 @@ export default defineNuxtPlugin({
 
     // Never before hydration: the first render has no boxes to measure.
     nuxtApp.hook("app:suspense:resolve", () => {
-      if (router.currentRoute.value.meta.precog === false) return;
+      precog.setPageOptOut(router.currentRoute.value.meta.precog === false);
       precog.start();
     });
 
     router.afterEach((to, from) => {
-      if (to.meta.precog === false) {
-        precog.pause();
-        return;
-      }
-      if (!precog.enabled) precog.resume();
+      precog.setPageOptOut(to.meta.precog === false);
+      if (to.meta.precog === false) return;
       // Wait for the new page to be in the DOM before measuring it.
       nuxtApp.hook("page:finish", () => precog.onRouteChange(from.fullPath));
     });

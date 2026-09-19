@@ -1,6 +1,15 @@
-/** Exposes the latest plan on `window`, so the e2e suite can check what the policy chose. */
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hook("precog:decision", (plan) => {
-    (window as unknown as { __precogPlan?: unknown }).__precogPlan = plan;
-  });
+/**
+ * Exposes the module to the e2e suite: the latest plan, and the instance itself, so a test
+ * can flip an experimental option without a second build.
+ */
+export default defineNuxtPlugin({
+  name: "playground:spy",
+  dependsOn: ["nuxt-precog"],
+  setup(nuxtApp) {
+    const spy = window as unknown as { __precogPlan?: unknown; __precog?: unknown };
+    spy.__precog = nuxtApp.$precog;
+    nuxtApp.hook("precog:decision", (plan) => {
+      spy.__precogPlan = plan;
+    });
+  },
 });

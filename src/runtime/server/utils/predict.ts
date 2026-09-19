@@ -16,6 +16,14 @@ export interface PredictHookContext {
   prediction: PrecogPrediction | null;
 }
 
+/** What a `precog:predicted` listener sees, after Jev answered. Read only. */
+export interface PredictedHookContext {
+  state: PrecogState;
+  prediction: PrecogPrediction;
+  /** True when the answer came from the `precog:predict` hook rather than from Jev. */
+  substituted: boolean;
+}
+
 /** The little bit of Nitro storage the cache needs. */
 export interface PredictStorage {
   getItem: (key: string) => Promise<unknown>;
@@ -31,6 +39,8 @@ export interface PredictDeps {
   fetch?: typeof globalThis.fetch;
   storage?: PredictStorage;
   hook?: (ctx: PredictHookContext) => unknown | Promise<unknown>;
+  /** Called with every fresh prediction, for recording and for analytics. */
+  afterHook?: (ctx: PredictedHookContext) => unknown | Promise<unknown>;
   now?: () => number;
 }
 
@@ -118,6 +128,7 @@ export async function runPrediction(state: PrecogState, deps: PredictDeps): Prom
     if (ctx.prediction) {
       const prediction = { ...ctx.prediction, cached: false };
       await writeCache(deps.storage, key, prediction, deps.ttlSeconds);
+      await deps.afterHook?.({ state, prediction, substituted: true });
       return { status: 200, prediction };
     }
   }
@@ -154,6 +165,7 @@ export async function runPrediction(state: PrecogState, deps: PredictDeps): Prom
       },
     };
     await writeCache(deps.storage, key, prediction, deps.ttlSeconds);
+    await deps.afterHook?.({ state, prediction, substituted: false });
     return { status: 200, prediction };
   } catch {
     return { status: 503, prediction: { ...EMPTY, latencyMs: now() - started } };

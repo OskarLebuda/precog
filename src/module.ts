@@ -19,6 +19,11 @@ import type {
   PrecogThresholds,
 } from "./runtime/types.ts";
 
+export type * from "./runtime/types.ts";
+export type { MetricsSummary, Pricing } from "./runtime/core/telemetry.ts";
+export type { PrecogTrigger } from "./runtime/core/orchestrator.ts";
+export type { PredictedHookContext, PredictHookContext } from "./runtime/server/utils/predict.ts";
+
 export interface ModuleOptions {
   /** Turn the whole module off without removing it. */
   enabled: boolean;

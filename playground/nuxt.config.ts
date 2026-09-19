@@ -1,10 +1,18 @@
+import { DOC_SLUGS } from "./shared/docs";
+
 export default defineNuxtConfig({
   modules: ["nuxt-precog"],
   devtools: { enabled: true },
   compatibilityDate: "2026-09-19",
-  // The docs section is prerendered so its pages have a payload to warm up.
+  // Only the docs section is prerendered, so its pages have a payload to warm up. Crawling
+  // is off: it would follow the header links and turn the whole demo into static files.
   routeRules: { "/docs/**": { prerender: true } },
-  nitro: { prerender: { crawlLinks: true, routes: ["/docs"] } },
+  nitro: {
+    prerender: {
+      crawlLinks: false,
+      routes: ["/docs", ...DOC_SLUGS.map((slug) => `/docs/${slug}`)],
+    },
+  },
   experimental: { payloadExtraction: true },
   precog: {
     mode: "auto",

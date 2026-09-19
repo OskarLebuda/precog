@@ -9,7 +9,12 @@ import {
 import { useNitroApp, useRuntimeConfig, useStorage } from "nitropack/runtime";
 import { readEnv } from "../utils/env.ts";
 import { RateLimiter } from "../utils/ratelimit.ts";
-import { runPrediction, type PredictHookContext, type PredictStorage } from "../utils/predict.ts";
+import {
+  runPrediction,
+  type PredictedHookContext,
+  type PredictHookContext,
+  type PredictStorage,
+} from "../utils/predict.ts";
 import { isSameSite, validateState } from "../utils/validate.ts";
 import type { PrecogBudget, PrecogPrivacy, PrecogPrediction } from "../../types.ts";
 
@@ -84,6 +89,9 @@ export default defineEventHandler(async (event): Promise<PrecogPrediction> => {
   }
 
   const nitro = useNitroApp();
+  const hooks = nitro.hooks as unknown as {
+    callHook: (name: string, ctx: unknown) => Promise<void>;
+  };
   const { status, prediction } = await runPrediction(validation.state, {
     // `NUXT_PRECOG_API_KEY` is handled by Nuxt; `TYPESAFE_API_KEY` is advocaat's own name.
     apiKey: config.apiKey || readEnv("TYPESAFE_API_KEY") || "",
