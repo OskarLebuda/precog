@@ -166,3 +166,35 @@ release routine rather than something to remember.
 The overlay is a single-file component, and `@nuxt/module-builder` needs `vue-tsc` to emit its
 declarations. Without it the build fails with an unhelpful `Cannot read properties of
 undefined (reading 'errors')`.
+
+## The DevTools tab is a real tab, not a served HTML page
+
+The first version served a hand-written HTML page from a Nitro route and fed it over a
+`BroadcastChannel`. That is not how DevTools integrations are meant to work. The tab is now
+built the way the Module Authors guide describes: a small Nuxt app under `client/`, generated
+into `dist/client`, served with `sirv` from the host's dev server, and registered with
+`addCustomTab`. During local work on the tab itself, `pnpm client:dev` serves it on port 3300
+and the host proxies to it.
+
+`@nuxt/devtools-ui-kit` is **not** used: its own documentation marks it deprecated and tells
+new integrations not to build against it. The tab uses plain CSS with `color-scheme: light dark`.
+
+The client reads the module straight off the host page through
+`useDevtoolsClient().host.nuxt`, so the `BroadcastChannel` is gone and the tab can also drive
+the module: pause, resume, predict now, reset counters.
+
+Two things this cost, both worth knowing:
+
+- A DevTools custom tab is registered under "modules" but is **not** pinned to the sidebar. It
+  is reachable at `/__nuxt_devtools__/client/modules/custom-<name>` and listed in DevTools
+  settings. The e2e suite navigates there rather than hunting for a sidebar button.
+- DevTools refuses most features to an "untrusted browser". The playground sets
+  `devtools.disableAuthorization` when `PRECOG_DEVTOOLS_OPEN=1`, which is how Playwright drives
+  it.
+
+## The e2e suite runs two servers
+
+Speculation rules and preloading are tested against the production build; DevTools only exists
+in a dev server. Playwright therefore starts both, and the `devtools` project points at the dev
+one. `pnpm test:e2e` builds the module and the tab client first, because without `dist/client`
+the tab falls back to proxying a dev server that is not running.

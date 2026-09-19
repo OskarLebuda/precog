@@ -5,9 +5,6 @@ import type { Precog } from "./core/orchestrator";
 import type { MetricsSummary } from "./core/telemetry";
 import type { PrecogPlan, PrecogPublicOptions } from "./types";
 
-/** Sends decisions to the DevTools tab, which lives in an iframe of its own. */
-const CHANNEL = "precog";
-
 export default defineNuxtPlugin({
   name: "nuxt-precog:overlay",
   dependsOn: ["nuxt-precog"],
@@ -21,15 +18,13 @@ export default defineNuxtPlugin({
     const plan = shallowRef<PrecogPlan | null>(null);
     const metrics = shallowRef<MetricsSummary | null>(null);
 
-    const channel = typeof BroadcastChannel === "undefined" ? null : new BroadcastChannel(CHANNEL);
-
-    nuxtApp.hook("precog:decision", (next, trigger) => {
+    // The DevTools tab reads the same hooks off the host app itself, so nothing is
+    // broadcast here.
+    nuxtApp.hook("precog:decision", (next) => {
       plan.value = next;
-      channel?.postMessage({ type: "decision", at: Date.now(), trigger, plan: next });
     });
     nuxtApp.hook("precog:metrics", (summary) => {
       metrics.value = summary;
-      channel?.postMessage({ type: "metrics", at: Date.now(), metrics: summary });
     });
 
     addEventListener("keydown", (event) => {

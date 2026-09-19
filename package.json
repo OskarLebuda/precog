@@ -13,7 +13,7 @@
     "typesafe"
   ],
   "license": "MIT",
-  "repository": "olebuda/nuxt-precog",
+  "repository": "OskarLebuda/nuxt-precog",
   "files": [
     "dist"
   ],
@@ -31,31 +31,35 @@
     "provenance": true
   },
   "scripts": {
-    "prepack": "nuxt-module-build build",
-    "build": "nuxt-module-build build",
+    "prepack": "nuxt-module-build build && pnpm client:build",
+    "build": "nuxt-module-build build && pnpm client:build",
     "dev": "pnpm dev:prepare && nuxt dev playground",
     "dev:build": "nuxt build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare client && nuxt prepare playground",
     "fmt": "oxlint . --fix && oxfmt .",
     "lint": "oxlint . && oxfmt --check .",
     "test": "vitest run",
     "test:watch": "vitest dev",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "nuxt-module-build build && nuxt build playground && playwright test",
+    "test:e2e": "pnpm build && nuxt build playground && playwright test",
     "bench": "node bench/run.mjs",
     "typecheck": "nuxt-module-build prepare && tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags",
     "check:treeshake": "node scripts/check-treeshake.mjs",
-    "record": "node scripts/record.mjs"
+    "record": "node scripts/record.mjs",
+    "client:build": "nuxt generate client",
+    "client:dev": "nuxt dev client --port 3300"
   },
   "dependencies": {
     "@nuxt/devtools-kit": "^3.4.2",
     "@nuxt/kit": "^4.5.2",
     "advocaat": "^0.0.6",
-    "defu": "^6.1.4"
+    "defu": "^6.1.4",
+    "sirv": "^3.0.2"
   },
   "devDependencies": {
+    "@nuxt/devtools": "^3.4.2",
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.5.2",
     "@nuxt/test-utils": "^4.3.2",

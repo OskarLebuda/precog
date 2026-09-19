@@ -2,7 +2,11 @@ import { DOC_SLUGS } from "./shared/docs";
 
 export default defineNuxtConfig({
   modules: ["nuxt-precog"],
-  devtools: { enabled: true },
+  devtools: {
+    enabled: true,
+    // Lets the e2e suite drive DevTools from an automated browser.
+    disableAuthorization: process.env.PRECOG_DEVTOOLS_OPEN === "1",
+  },
   compatibilityDate: "2026-09-19",
   // Only the docs section is prerendered, so its pages have a payload to warm up. Crawling
   // is off: it would follow the header links and turn the whole demo into static files.

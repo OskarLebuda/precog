@@ -7,7 +7,7 @@ import {
   defineNuxtModule,
 } from "@nuxt/kit";
 import { defu } from "defu";
-import { DEVTOOLS_ROUTE, setupDevtools } from "./devtools";
+import { setupDevtools } from "./devtools";
 import type {
   PrecogBudget,
   PrecogCacheOptions,
@@ -176,13 +176,6 @@ export default defineNuxtModule<ModuleOptions>({
       addPlugin({ src: resolver.resolve("./runtime/plugin.overlay.client"), mode: "client" });
     }
 
-    if (nuxt.options.dev) {
-      addServerHandler({
-        route: DEVTOOLS_ROUTE,
-        method: "get",
-        handler: resolver.resolve("./runtime/server/handlers/devtools.get"),
-      });
-      setupDevtools(nuxt);
-    }
+    if (nuxt.options.dev) setupDevtools(nuxt, resolver);
   },
 });

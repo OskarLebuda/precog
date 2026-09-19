@@ -9,5 +9,5 @@
     "noEmit": true
   },
   "include": ["src", "test", "bench", "*.ts"],
-  "exclude": ["dist", "node_modules", "playground"]
+  "exclude": ["dist", "node_modules", "playground", "client"]
 }
