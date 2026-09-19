@@ -191,6 +191,8 @@ export interface PrecogMetrics {
   cacheHits: number;
   /** Calls that failed or timed out. */
   errors: number;
+  /** Why the last call failed, straight from the server. Empty once one succeeds. */
+  lastError: string;
   /** Jev latencies in milliseconds, newest last. */
   latencies: number[];
   /** Navigations where the clicked link was in the speculated set. */

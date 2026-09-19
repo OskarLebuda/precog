@@ -8,6 +8,7 @@ export const emptyMetrics = (): PrecogMetrics => ({
   calls: 0,
   cacheHits: 0,
   errors: 0,
+  lastError: "",
   latencies: [],
   hits: 0,
   topHits: 0,
@@ -75,6 +76,7 @@ export class Telemetry {
   }
 
   record(patch: Partial<PrecogMetrics>) {
+    if (patch.lastError !== undefined) this.metrics.lastError = patch.lastError;
     const counters = this.metrics as unknown as Record<string, number>;
     for (const [key, value] of Object.entries(patch)) {
       if (typeof value === "number") counters[key] = (counters[key] ?? 0) + value;

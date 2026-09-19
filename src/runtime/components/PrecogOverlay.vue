@@ -124,6 +124,10 @@ function path(url: string) {
         </dd>
         <dt>activations</dt>
         <dd>{{ metrics.activations }} page loads served from a speculative load</dd>
+        <template v-if="metrics.lastError">
+          <dt>last error</dt>
+          <dd class="precog-error">{{ metrics.lastError }}</dd>
+        </template>
       </dl>
       <p v-else class="precog-quiet">Waiting for the first prediction.</p>
 
@@ -236,6 +240,10 @@ function path(url: string) {
 
 .precog-hud li[data-action="prefetch"] span {
   color: #9ad0ff;
+}
+
+.precog-error {
+  color: #ff9a8f;
 }
 
 .precog-hud footer,

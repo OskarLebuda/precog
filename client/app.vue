@@ -136,6 +136,10 @@ const time = (at: number) => new Date(at).toLocaleTimeString();
         <dd>{{ percent(metrics.topAccuracy) }} correct</dd>
         <dt>activations</dt>
         <dd>{{ metrics.activations }} page loads served from a speculative load</dd>
+        <template v-if="metrics.lastError">
+          <dt>last error</dt>
+          <dd class="error">{{ metrics.lastError }}</dd>
+        </template>
       </dl>
     </section>
 
@@ -365,5 +369,9 @@ ul.bars li {
 .reason,
 .quiet {
   color: var(--precog-quiet);
+}
+
+.error {
+  color: rgb(235 110 95);
 }
 </style>

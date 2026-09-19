@@ -5,7 +5,7 @@ import {
   useRouter,
   useRuntimeConfig,
 } from "#app";
-import { Precog } from "./core/orchestrator";
+import { Precog, PredictionFailed } from "./core/orchestrator";
 import type { PrecogPrediction, PrecogPublicOptions } from "./types";
 
 /** `?precog=off` turns the module off for a side-by-side recording. */
@@ -31,9 +31,15 @@ export default defineNuxtPlugin({
             signal,
             retry: false,
           });
-        } catch {
+        } catch (error) {
           // Fail open: the orchestrator applies the fallback and the page is untouched.
-          return null;
+          // The server says why in a header; without it a failure is just a counter.
+          const response = (error as { response?: { headers?: Headers; status?: number } })
+            .response;
+          throw new PredictionFailed(
+            response?.headers?.get("x-precog-reason") ||
+              (error instanceof Error ? error.message : "request failed"),
+          );
         }
       },
       // Effector B: warm what the client router will actually need for an in-app navigation.

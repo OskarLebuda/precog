@@ -375,3 +375,22 @@ Two things the move surfaced, both from ranking by label instead of by document 
 sorted ahead of `l2`, and the mock's `exit` probability was high enough to push the top
 candidate just under the prerender threshold. Ties now keep document order, and `exit` drops
 when the cursor is on a link, because someone hovering a link is not about to leave.
+
+## A failure has to say why, in the overlay
+
+The server has reported a reason in `x-precog-reason` since the hook bug, but the client threw
+it away and the HUD showed only a counter. "1 failed" is indistinguishable between a wrong key,
+a timeout and a rejected request shape, and every one of those has a different fix.
+
+The client now reads that header, the orchestrator keeps the newest reason as
+`metrics.lastError`, and both the overlay and the DevTools tab print it. A successful call
+clears it.
+
+This surfaced from a real report of "the playground keeps failing" that took a reproduction and
+a header dump to diagnose, when the answer was sitting one response header away.
+
+## Nuxt does not override an exported variable with `.env`
+
+Chasing that report cost a detour: a stale `AI_GATEWAY_API_KEY` exported in the shell shadowed
+the current one in `playground/.env`, because dotenv leaves existing environment variables
+alone. The symptom is a 401 with a key that demonstrably works when read from the file.

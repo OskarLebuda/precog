@@ -29,6 +29,11 @@ import type {
   PrecogState,
 } from "../types";
 
+/** A prediction that did not happen, carrying the server's reason for the overlay. */
+export class PredictionFailed extends Error {
+  override name = "PredictionFailed";
+}
+
 /** Why a prediction was asked for. Shown in the devtools timeline. */
 export type PrecogTrigger = "route" | "scroll" | "pointer" | "dom" | "manual" | "visible";
 
@@ -274,13 +279,19 @@ export class Precog {
     this.telemetry.record({ calls: 1 });
     this.lastTrigger = trigger;
 
-    const prediction = await this.#deps.post(state, signal);
+    let prediction: PrecogPrediction | null = null;
+    let failure = "";
+    try {
+      prediction = await this.#deps.post(state, signal);
+    } catch (error) {
+      failure = error instanceof Error ? error.message : "request failed";
+    }
 
     if (controller !== this.#controller) return;
     this.#controller = null;
 
     if (!prediction) {
-      this.telemetry.record({ errors: 1 });
+      this.telemetry.record({ errors: 1, lastError: failure || "request failed" });
       this.#applyFallback();
       this.#emitMetrics();
       return;
@@ -289,6 +300,7 @@ export class Precog {
     if (fingerprint(this.links) !== before) return;
 
     this.telemetry.record({
+      lastError: "",
       cacheHits: prediction.cached ? 1 : 0,
       inputTokens: prediction.usage?.input ?? 0,
       outputTokens: prediction.usage?.output ?? 0,
