@@ -24,6 +24,9 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # The root tsconfig extends `.nuxt/tsconfig.json`, which is generated. undocs loads its
+      # app from this repo's node_modules, so its build resolves that tsconfig too.
+      - run: pnpm exec nuxt-module-build prepare
       - run: pnpm docs:build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4

@@ -285,3 +285,26 @@ The two are themed differently on purpose:
 
 One cost worth knowing: npm does not render mermaid, so on the package page that block shows as
 its source. The diagram is short enough to still read as text.
+
+## Every build in this repo needs a Nuxt prepare first
+
+The root `tsconfig.json` extends `.nuxt/tsconfig.json`, which is generated. That is the Nuxt
+module convention, but it means a clean checkout has a `tsconfig.json` that does not resolve,
+and anything walking up the tree to find one falls over.
+
+It bit two CI jobs and not the third: the `ci` job ran `pnpm dev:prepare` first, so it passed,
+while `e2e` and `docs` did not and both failed with `Tsconfig not found`. The docs build was an
+innocent victim: undocs loads its own app from this repo's `node_modules`, so resolving a
+tsconfig for those files walks up to the repo root. Giving `docs/` its own `tsconfig.json` does
+not help for that reason.
+
+`test:e2e` now starts with `nuxt-module-build prepare`, so the script works from a clean
+checkout anywhere, and the docs workflow runs the same prepare before building.
+
+## The playground's shared module needs the `#shared` alias
+
+Two playground pages imported `../../shared/docs`. That happens to work once `playground/.nuxt`
+exists and fails on a genuinely clean build with a mangled relative path
+(`../../../../../../../../playground/shared/docs.ts`), because `shared/` is a Nuxt directory
+convention and is resolved through the `#shared` alias, not relatively. The bug had been there
+the whole time and was invisible locally, because `playground/.nuxt` was never deleted.

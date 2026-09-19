@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DOC_SLUGS, docTitle } from "../../shared/docs";
+import { DOC_SLUGS, docTitle } from "#shared/docs";
 </script>
 
 <template>

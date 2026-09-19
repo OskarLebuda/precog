@@ -40,7 +40,7 @@
     "test": "vitest run",
     "test:watch": "vitest dev",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "pnpm build && nuxt build playground && pnpm dev:prepare && playwright test",
+    "test:e2e": "nuxt-module-build prepare && pnpm build && nuxt build playground && pnpm dev:prepare && playwright test",
     "bench": "node bench/run.mjs",
     "typecheck": "nuxt-module-build prepare && tsc --noEmit",
     "check": "pnpm lint && pnpm typecheck && pnpm test",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DOC_SLUGS, docBody, docTitle } from "../../shared/docs";
+import { DOC_SLUGS, docBody, docTitle } from "#shared/docs";
 
 const route = useRoute();
 const slug = computed(() => String(route.params.slug));
