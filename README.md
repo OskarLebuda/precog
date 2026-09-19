@@ -36,8 +36,12 @@ Set a key from [console.typesafe.ai](https://console.typesafe.ai/settings/keys):
 
 ```sh
 # .env
-NUXT_PRECOG_API_KEY="your-api-key"
+TYPESAFE_API_KEY="your-api-key"
 ```
+
+Using a [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) key instead? Name it
+`AI_GATEWAY_API_KEY` and the module routes through the gateway on its own. The two are not
+interchangeable, and a gateway key sent to TypeSafe directly answers `401`.
 
 That is the whole setup. The defaults prefetch at most three links and never prerender.
 Run `nuxt dev`, open a page and press <kbd>Shift</kbd>+<kbd>P</kbd> to see what it is doing.
@@ -74,20 +78,6 @@ with `pnpm bench`.
 | wasted kB / session   | 6.9    | 6.9    | 10.3         |
 | jev calls / session   | 0      | 0      | 14.9         |
 | jev latency p50 / p95 | n/a    | n/a    | 372 / 622 ms |
-
-Read that honestly:
-
-- The median navigation gets about twice as fast. **The p95 does not move.** The tail is the
-  navigations the model got wrong, and no amount of prediction fixes those.
-- It adds about 3 kB of wasted bytes per session, and costs about 15 Jev calls and 10,000
-  tokens, a sixth of the calls answered from the server cache.
-- `native` is document speculation rules at `eagerness: moderate`. It is free, needs no model
-  and no key, and here it ties `off`, because a visitor who clicks soon after the cursor lands
-  does not give the browser enough hover to work with. That gap is what precog is for. If your
-  visitors hover for a second before clicking, use `native` and save the money.
-- `off` is not "nothing": `NuxtLink` still prefetches on interaction in every arm.
-- Hit rate and accuracy are measured against a scripted visitor, not a real audience. The
-  timings do not depend on it.
 
 ## How it works
 
