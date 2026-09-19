@@ -1,0 +1,14 @@
+node_modules
+dist
+.nuxt
+.output
+.data
+.env
+*.log
+coverage
+.DS_Store
+playground/.nuxt
+playground/.output
+bench/results
+test-results
+playwright-report

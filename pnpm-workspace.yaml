@@ -1,0 +1,12 @@
+# https://pnpm.io/settings
+
+packages:
+  - playground
+  - bench
+
+# Always use the local module, never the registry.
+overrides:
+  nuxt-precog: link:.
+
+dedupePeers: true
+ignoreWorkspaceRootCheck: true

@@ -1,0 +1,73 @@
+{
+  "name": "nuxt-precog",
+  "version": "0.0.0",
+  "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
+  "license": "MIT",
+  "repository": "olebuda/nuxt-precog",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "speculation-rules",
+    "prefetch",
+    "prerender",
+    "prediction",
+    "typesafe",
+    "jev"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "types": "./dist/types.d.mts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "build": "nuxt-module-build build",
+    "dev": "pnpm dev:prepare && nuxt dev playground",
+    "dev:build": "nuxt build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+    "fmt": "oxlint . --fix && oxfmt .",
+    "lint": "oxlint . && oxfmt --check .",
+    "test": "vitest run",
+    "test:watch": "vitest dev",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "bench": "node bench/run.mjs",
+    "typecheck": "nuxt-module-build prepare && tsc --noEmit",
+    "check": "pnpm lint && pnpm typecheck && pnpm test",
+    "release": "pnpm check && pnpm build && changelogen --release && pnpm publish && git push --follow-tags"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^4.5.2",
+    "advocaat": "^0.0.6",
+    "defu": "^6.1.4"
+  },
+  "devDependencies": {
+    "@nuxt/devtools-kit": "^4.0.0-beta.1",
+    "@nuxt/module-builder": "^1.0.3",
+    "@nuxt/schema": "^4.5.2",
+    "@nuxt/test-utils": "^4.3.2",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^5.0.1",
+    "changelogen": "^0.6.2",
+    "nuxt": "^4.5.2",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
+    "typescript": "~5.9.0",
+    "vitest": "^5.0.1",
+    "vue": "^3.5.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^10"
+    }
+  }
+}
