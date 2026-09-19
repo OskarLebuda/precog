@@ -45,3 +45,33 @@ returns is either one the server itself wrote into the request, or it is dropped
 
 A cached answer is cheap but not free, and the limit is there to protect the endpoint as well
 as the Jev bill. Calls are counted before the cache is consulted.
+
+## Document speculation does nothing for a NuxtLink click (measured)
+
+`e2e/spa-vs-document.spec.ts` records what Chrome actually fetches.
+
+- With a `prefetch` list rule for `/blog/1`, Chrome fetches that document with
+  `Sec-Purpose: prefetch`. That part works.
+- Clicking the `NuxtLink` to `/blog/1` then makes **no document request at all**. The client
+  router handles it, so the prefetched document is never used. The plan's constraint 5 is
+  correct.
+- Setting `location.href` to the same URL does use it: the new document reports
+  `deliveryType: "navigational-prefetch"`.
+
+Two consequences:
+
+1. Effector A (speculation rules) pays off for full document navigations: the first landing
+   on a site, links opened in a new tab, and the experimental `documentNavigation` mode.
+2. For ordinary in-app navigation the win has to come from effector B, and from _narrowing_
+   what is loaded rather than adding to it. `NuxtLink` prefetches every link that enters the
+   viewport; precog's job there is to prefetch three instead of thirty.
+
+A second measurement: in the playground, a `NuxtLink` click fetches nothing at all, because
+`NuxtLink` had already prefetched the route chunk and the pages have no server data. So the
+benchmark in M7 has to measure pages that do fetch data, or the numbers mean nothing.
+
+## Playwright runs against installed Chrome
+
+The bundled Chromium build could not be downloaded in this environment, and Speculation Rules
+are a Chromium feature anyway. The e2e project uses `channel: "chrome"`, which also means the
+tests exercise the shipping implementation rather than a build ahead of it.
