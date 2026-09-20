@@ -309,7 +309,7 @@ the whole time and was invisible locally, because `playground/.nuxt` was never d
 
 ## The docs site is deployed under a path prefix
 
-GitHub Pages serves this repository at `oskarlebuda.github.io/nuxt-precog/`, not at a domain
+GitHub Pages serves this repository at `oskarlebuda.github.io/precog/`, not at a domain
 root. undocs builds asset paths from `/`, so the first deploy returned a perfectly valid
 `index.html` whose every asset 404ed: a blank page.
 
@@ -434,3 +434,30 @@ So `@precog/next` exports `PrecogLink`, which is `next/link` with `prefetch={fal
 the import is the one manual step, and without it precog has nothing to narrow: the e2e suite
 asserts that a docs page with twelve links warms at most four routes, and that assertion only
 passes because the playground uses `PrecogLink`.
+
+## The docs palette needs two different values
+
+undocs derives the whole Nuxt UI palette from one `themeColor`, and that value is used twice
+in ways that want opposite things:
+
+- Nuxt UI wants a **palette name**. A hex leaves `primary` with no palette, and the hero button
+  renders black on black.
+- The og-image generator drops it straight into a CSS gradient, so it wants a **colour**. A
+  palette name does not just degrade the image, it fails the build with
+  `invalid value for backgroundImage ... near "neutral"`.
+
+Black and white needs a neutral palette, which is in neither of their maps, so one value cannot
+satisfy both. `themeColor` stays a hex for the og image, and `docs/.docs/app.config.ts` sets
+`ui.colors.primary` to `neutral`. `.docs` is a Nuxt layer, so its app config wins over the one
+undocs writes into its own nuxt.config.
+
+Both `.gitignore` files had to stop ignoring that one file: `.docs` is a build directory that
+now also holds two sources.
+
+## The docs workflow kept a step that outlived its reason
+
+`pnpm exec nuxt-module-build prepare` was added to the docs job because the root `tsconfig.json`
+extended a generated file and undocs resolved it while building. The workspace split deleted
+that root tsconfig, and moved `src/` into `packages/nuxt`, so the step could no longer find a
+module and failed the whole job on the first push to main after the merge. The docs build needs
+no prepare now.

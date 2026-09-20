@@ -7,11 +7,11 @@
     "nuxt",
     "nuxt-module"
   ],
-  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "homepage": "https://oskarlebuda.github.io/precog",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "url": "git+https://github.com/OskarLebuda/precog.git",
     "directory": "packages/nuxt-precog"
   },
   "files": [

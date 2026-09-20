@@ -13,12 +13,12 @@
     "speculation-rules",
     "typesafe"
   ],
-  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
-  "bugs": "https://github.com/OskarLebuda/nuxt-precog/issues",
+  "homepage": "https://oskarlebuda.github.io/precog",
+  "bugs": "https://github.com/OskarLebuda/precog/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "url": "git+https://github.com/OskarLebuda/precog.git",
     "directory": "packages/next"
   },
   "files": [
