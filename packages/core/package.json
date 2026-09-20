@@ -19,6 +19,9 @@
     "./client": "./dist/client.mjs",
     "./server": "./dist/server.mjs"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "obuild",
     "prepack": "pnpm build",

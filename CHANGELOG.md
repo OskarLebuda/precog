@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.3.0
+
+precog is no longer Nuxt only. The module was split into a framework-free core and one adapter
+per framework, so the same prediction loop now runs on Next.js.
+
+### Packages
+
+- `@precog/core` holds everything that never needed a framework: candidates, policy, speculation
+  rules, and the prediction endpoint that talks to Jev.
+- `@precog/nuxt` is the Nuxt module, unchanged in behaviour.
+- `@precog/next` is new, for the App Router.
+- `nuxt-precog` is now a stub that forwards to `@precog/nuxt`. Nothing breaks if you stay on it,
+  but move when convenient.
+
+### Next.js
+
+`PrecogProvider` wires the client, `usePrecog()` exposes the same state as on Nuxt, and a route
+handler covers the server half. Next has no global prefetch switch, so `PrecogLink` replaces
+`next/link` where you want precog to decide instead of the viewport.
+
+### Documentation
+
+The site moved to <https://precog.oskarlebuda.dev>. A custom domain keeps documentation links
+alive across renames, which the move from `nuxt-precog` to `precog` did not.
+
 ## v0.2.0
 
 The first release built against the real Jev. Everything in 0.1.0 was developed and tested

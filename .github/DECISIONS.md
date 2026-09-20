@@ -478,3 +478,31 @@ undocs' `/icon.svg` is correct again with no rewriting, which is why the script 
 `docs/.docs/public/CNAME` ends up in the built output on purpose. With `build_type: workflow`
 the custom domain is stored in the repository settings, but a deploy whose artifact has no
 `CNAME` can clear it, which silently takes the site off the domain.
+
+## Publishing a workspace is not publishing a package
+
+The release workflow was written for the flat layout and survived the workspace split unnoticed,
+because nothing had been tagged since. It read the version from the root `package.json` and ran
+`npm publish` there. The root is `private: true` and is not one of the four published packages,
+so a tag would have published nothing at all.
+
+Two traps sit under the rewrite:
+
+`npm publish` ships `workspace:*` verbatim. The adapters depend on `@precog/core` that way, so
+publishing with npm produces a tarball whose dependency range no registry can resolve. `pnpm
+pack` rewrites it to the real version, which is why the workflow packs with pnpm and hands the
+tarball to `npm publish` rather than publishing the directory. Verified by unpacking the
+tarball and reading its manifest, not by trusting either tool.
+
+`@precog/core` had no `publishConfig.access`. A scoped package defaults to restricted, so its
+first publish would have failed on the rest of the scope being public.
+
+## Trusted publishing was never actually working
+
+The v0.2.0 tag failed with `404 Not Found - PUT https://registry.npmjs.org/nuxt-precog`, which
+reads like a missing package but is how the registry reports an unauthorised publish. 0.2.0 went
+out by hand, and the workflow kept looking correct because nothing retried it.
+
+npm will not attach a trusted publisher to a package that does not exist yet, so the three
+scoped packages cannot be covered before their first publish. That first publish is manual; the
+tag-driven workflow only takes over from the second one.
