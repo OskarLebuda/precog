@@ -10,7 +10,7 @@
  * about real people. Timings are real: real Chrome, a real build, a throttled link.
  *
  * Needs a key: the playground has no stand-in, so every arm measures the real service.
- * Usage: pnpm dev:build && TYPESAFE_API_KEY=... pnpm bench
+ * Usage: pnpm --filter @precog/nuxt dev:build && TYPESAFE_API_KEY=... pnpm bench
  */
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -263,7 +263,7 @@ if (!process.env.TYPESAFE_API_KEY && !process.env.AI_GATEWAY_API_KEY) {
   process.exit(1);
 }
 
-const server = spawn("node", ["playground/.output/server/index.mjs"], {
+const server = spawn("node", ["packages/nuxt/playground/.output/server/index.mjs"], {
   env: { ...process.env, PORT: String(PORT), NITRO_PORT: String(PORT) },
   stdio: "ignore",
 });

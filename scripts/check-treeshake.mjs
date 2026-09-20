@@ -3,10 +3,10 @@ import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const OUTPUT = "playground/.output";
+const OUTPUT = "packages/nuxt/playground/.output";
 const NEEDLES = ["precog-hud", "precog-badge", "nuxt-precog:overlay"];
 
-execFileSync("pnpm", ["exec", "nuxt", "build", "playground"], {
+execFileSync("pnpm", ["--filter", "@precog/nuxt", "exec", "nuxt", "build", "playground"], {
   stdio: "inherit",
   env: { ...process.env, PRECOG_OVERLAY: "dev", NODE_ENV: "production" },
 });

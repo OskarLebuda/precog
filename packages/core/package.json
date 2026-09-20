@@ -1,0 +1,37 @@
+{
+  "name": "@precog/core",
+  "version": "0.3.0",
+  "description": "Framework-free heart of precog: candidates, policy, speculation rules and the prediction endpoint.",
+  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "directory": "packages/core"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./client": "./dist/client.mjs",
+    "./server": "./dist/server.mjs"
+  },
+  "scripts": {
+    "build": "obuild",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "advocaat": "^0.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "happy-dom": "^20.0.0",
+    "obuild": "latest",
+    "typescript": "~5.9.0",
+    "vitest": "^5.0.1"
+  }
+}
