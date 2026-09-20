@@ -4,3 +4,4 @@ dist
 .data
 .docs/*
 !.docs/public
+!.docs/app.config.ts

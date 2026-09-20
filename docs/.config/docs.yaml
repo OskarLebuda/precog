@@ -1,29 +1,35 @@
 # yaml-language-server: $schema=https://unpkg.com/undocs/schema/config.json
 
-name: "nuxt-precog"
+name: "precog"
 shortDescription: "Your links, loaded before the click."
-description: "A Nuxt module that asks TypeSafe Jev which link a visitor is about to click, then warms exactly that navigation."
-github: "OskarLebuda/nuxt-precog"
-url: "https://oskarlebuda.github.io/nuxt-precog"
-# A palette name, not a hex: undocs feeds this straight to Nuxt UI as its primary
-# colour. `emerald` (#00d492) is the closest one to Nuxt green (#00DC82).
-themeColor: "emerald"
+description: "Asks TypeSafe Jev which link a visitor is about to click, then warms exactly that navigation. For Nuxt and Next.js."
+github: "OskarLebuda/precog"
+url: "https://oskarlebuda.github.io/precog"
+# A palette name, not a hex: undocs feeds this straight to Nuxt UI as its primary colour.
+# `neutral` keeps the whole interface black and white.
+themeColor: "#171717"
 landing:
-  heroCode: "npx nuxt module add nuxt-precog"
+  heroCode: "npm install @precog/nuxt   # or @precog/next"
   contributors: true
   features:
     - title: "One request, three questions"
       icon: "i-lucide-brain"
-      description: "Jev answers with a probability for every link on the page, in about 100 ms."
+      description: "Jev answers with a probability for every link on the page, in about 400 ms."
     - title: "Two effectors"
       icon: "i-lucide-zap"
-      description: "Speculation rules for document navigations, Nuxt preloading for in-app ones."
+      description: "Speculation rules for document navigations, your framework's preloading for in-app ones."
+    - title: "Nuxt and Next"
+      icon: "i-lucide-boxes"
+      description: "One shared core, one adapter each. The framework-free half is published too."
     - title: "Watch it guess"
       icon: "i-lucide-eye"
       description: "Probability badges on every link, a HUD, and a Nuxt DevTools tab."
     - title: "Fails open"
       icon: "i-lucide-shield"
       description: "Any error or timeout means the page is left exactly as it was."
+    - title: "The key stays server side"
+      icon: "i-lucide-lock"
+      description: "No identifiers, no full URLs, and a test that fails if the key ever reaches the browser."
 footer:
   notes:
-    - "Released under the [MIT License](https://github.com/OskarLebuda/nuxt-precog/blob/main/LICENSE)."
+    - "Released under the [MIT License](https://github.com/OskarLebuda/precog/blob/main/LICENSE)."

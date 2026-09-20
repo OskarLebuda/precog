@@ -1,11 +1,11 @@
 /**
  * Prefixes the paths undocs writes from the domain root.
  *
- * GitHub Pages serves this repository's site under `/nuxt-precog/`. `NUXT_APP_BASE_URL` moves
+ * GitHub Pages serves this repository's site under `/precog/`. `NUXT_APP_BASE_URL` moves
  * the bundled assets, but undocs hardcodes its logo and favicon as `/icon.svg`, which the base
  * URL never touches, so the logo 404s on a project page. This rewrites those.
  *
- * Usage: NUXT_APP_BASE_URL=/nuxt-precog/ node scripts/fix-docs-base.mjs
+ * Usage: NUXT_APP_BASE_URL=/precog/ node scripts/fix-docs-base.mjs
  */
 import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

@@ -59,7 +59,7 @@ First release.
 - `takeOverNuxtLinkPrefetch` to replace `NuxtLink`'s blanket viewport prefetch.
 - Experimental `documentNavigation`.
 - A playground and a benchmark harness.
-- Documentation at <https://oskarlebuda.github.io/nuxt-precog>.
+- Documentation at <https://oskarlebuda.github.io/precog>.
 - Published from GitHub Actions with npm trusted publishing, so there is no token anywhere.
 
 ### Known limits

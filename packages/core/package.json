@@ -2,11 +2,11 @@
   "name": "@precog/core",
   "version": "0.3.0",
   "description": "Framework-free heart of precog: candidates, policy, speculation rules and the prediction endpoint.",
-  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "homepage": "https://oskarlebuda.github.io/precog",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "url": "git+https://github.com/OskarLebuda/precog.git",
     "directory": "packages/core"
   },
   "files": [

@@ -10,8 +10,10 @@ coverage
 .output
 .next
 .data
-.docs
+# `docs/.docs` is undocs' build directory, but it is also a Nuxt layer we put sources in.
+.docs/*
 !docs/.docs/public
+!docs/.docs/app.config.ts
 
 # Secrets.
 .env
