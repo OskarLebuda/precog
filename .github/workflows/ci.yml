@@ -15,6 +15,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Every package's tsconfig resolves through generated types, so nothing typechecks
+      # before this.
       - run: pnpm dev:prepare
       - run: pnpm lint
       - run: pnpm typecheck
@@ -23,6 +25,10 @@ jobs:
 
   e2e:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ["@precog/nuxt", "@precog/next"]
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -32,10 +38,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chrome
-      - run: pnpm test:e2e
+      # Both adapters build on the core package, so it has to exist first.
+      - run: pnpm --filter @precog/core build
+      - run: pnpm --filter ${{ matrix.package }} test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report
-          path: playwright-report
+          name: playwright-report-${{ strategy.job-index }}
+          path: packages/*/playwright-report
           retention-days: 7

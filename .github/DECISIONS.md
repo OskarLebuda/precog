@@ -394,3 +394,43 @@ a header dump to diagnose, when the answer was sitting one response header away.
 Chasing that report cost a detour: a stale `AI_GATEWAY_API_KEY` exported in the shell shadowed
 the current one in `playground/.env`, because dotenv leaves existing environment variables
 alone. The symptom is a 401 with a key that demonstrably works when read from the file.
+
+## One workspace, three packages
+
+`@precog/core` holds everything that never knew which framework it was in: candidates, signals,
+the policy, the speculation rules, the telemetry, the orchestrator, and the prediction endpoint
+minus its HTTP wrapper. That was 1933 lines already free of Nuxt, Vue and h3 imports, because
+the orchestrator was written with its dependencies injected. Splitting it was moving files, not
+rewriting them.
+
+`@precog/nuxt` and `@precog/next` are what is left: a Nuxt module and a Next route handler plus
+provider. Each is a few hundred lines.
+
+One leak had to be plugged on the way: `takeOverNuxtLinkPrefetch` sat in the shared options
+type, so `@precog/core` knew about `NuxtLink` and `@precog/next` had to carry a field it can
+never use. It is a build-time Nuxt option and now lives only there.
+
+## `"use client"` does not survive bundling
+
+The bundler dropped the directive from `@precog/next`'s client entry, and nothing failed. Next
+would have treated `PrecogProvider` as a server component and thrown on the first hook, in
+every app that installed it.
+
+`packages/next/scripts/use-client.mjs` puts it back and then asserts the result, rather than
+trusting the write. It also asserts that `dist/server.mjs` is _not_ marked, because the route
+handler must stay out of the client graph. The chunk they share holds plain data with no hooks,
+so it is safe in both.
+
+That is the third time packaging broke silently in this project, after the `.ts` extensions and
+the missing `dist/client`. Every one of them was caught by running the built artefact rather
+than reading it.
+
+## Next prefetches everything, and has no switch for it
+
+Nuxt has `experimental.defaults.nuxtLink.prefetchOn`, which is how `takeOverNuxtLinkPrefetch`
+hands the decision to precog. Next has no equivalent: `prefetch` is a prop on each `<Link>`.
+
+So `@precog/next` exports `PrecogLink`, which is `next/link` with `prefetch={false}`. Swapping
+the import is the one manual step, and without it precog has nothing to narrow: the e2e suite
+asserts that a docs page with twelve links warms at most four routes, and that assertion only
+passes because the playground uses `PrecogLink`.
