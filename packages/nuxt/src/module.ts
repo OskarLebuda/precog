@@ -16,12 +16,12 @@ import type {
   PrecogPrivacy,
   PrecogPublicOptions,
   PrecogThresholds,
-} from "@precog/core";
+} from "precog-core";
 
-export type * from "@precog/core";
-export type { MetricsSummary, Pricing } from "@precog/core/client";
-export type { PrecogTrigger } from "@precog/core/client";
-export type { PredictedHookContext, PredictHookContext } from "@precog/core/server";
+export type * from "precog-core";
+export type { MetricsSummary, Pricing } from "precog-core/client";
+export type { PrecogTrigger } from "precog-core/client";
+export type { PredictedHookContext, PredictHookContext } from "precog-core/server";
 
 export interface ModuleOptions {
   /** Turn the whole module off without removing it. */
@@ -111,7 +111,7 @@ const defaults: ModuleOptions = {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: "@precog/nuxt",
+    name: "precog-nuxt",
     configKey: "precog",
     compatibility: { nuxt: ">=3.13.0" },
   },

@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@precog/nuxt"><img src="https://img.shields.io/npm/v/@precog/nuxt?color=00DC82&labelColor=020420&label=%40precog%2Fnuxt" alt="@precog/nuxt"></a>
-  <a href="https://www.npmjs.com/package/@precog/next"><img src="https://img.shields.io/npm/v/@precog/next?color=00DC82&labelColor=020420&label=%40precog%2Fnext" alt="@precog/next"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@precog/nuxt?color=00DC82&labelColor=020420" alt="license"></a>
+  <a href="https://www.npmjs.com/package/precog-nuxt"><img src="https://img.shields.io/npm/v/precog-nuxt?color=FAFAFA&labelColor=111111&label=precog-nuxt" alt="precog-nuxt"></a>
+  <a href="https://www.npmjs.com/package/precog-next"><img src="https://img.shields.io/npm/v/precog-next?color=FAFAFA&labelColor=111111&label=precog-next" alt="precog-next"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/precog-nuxt?color=FAFAFA&labelColor=111111" alt="license"></a>
 </p>
 
 <p align="center">
@@ -25,35 +25,35 @@ top of the page, so you can watch it guess.
 Not a general prefetcher. Nuxt and Next already prefetch every link that enters the viewport.
 This one tries to prefetch three links instead of thirty, and to start before the hover.
 
-| Package                           | For                                                           |
-| --------------------------------- | ------------------------------------------------------------- |
-| [`@precog/nuxt`](./packages/nuxt) | Nuxt 3 and 4                                                  |
-| [`@precog/next`](./packages/next) | Next.js App Router                                            |
-| [`@precog/core`](./packages/core) | the framework-free half, if you want to write another adapter |
+| Package                          | For                                                           |
+| -------------------------------- | ------------------------------------------------------------- |
+| [`precog-nuxt`](./packages/nuxt) | Nuxt 3 and 4                                                  |
+| [`precog-next`](./packages/next) | Next.js App Router                                            |
+| [`precog-core`](./packages/core) | the framework-free half, if you want to write another adapter |
 
 ## Quickstart
 
 **Nuxt**
 
 ```sh
-npx nuxt module add @precog/nuxt
+npx nuxt module add precog-nuxt
 ```
 
 **Next.js**, App Router:
 
 ```sh
-npm install @precog/next
+npm install precog-next
 ```
 
 ```ts
 // app/api/precog/route.ts
-import { createPrecogHandler } from "@precog/next/server";
+import { createPrecogHandler } from "precog-next/server";
 export const POST = createPrecogHandler();
 ```
 
 ```tsx
 // app/layout.tsx
-import { PrecogProvider } from "@precog/next";
+import { PrecogProvider } from "precog-next";
 // wrap children in <PrecogProvider>
 ```
 

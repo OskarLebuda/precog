@@ -10,7 +10,7 @@
  * about real people. Timings are real: real Chrome, a real build, a throttled link.
  *
  * Needs a key: the playground has no stand-in, so every arm measures the real service.
- * Usage: pnpm --filter @precog/nuxt dev:build && TYPESAFE_API_KEY=... pnpm bench
+ * Usage: pnpm --filter precog-nuxt dev:build && TYPESAFE_API_KEY=... pnpm bench
  */
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";

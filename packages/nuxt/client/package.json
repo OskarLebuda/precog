@@ -1,5 +1,5 @@
 {
-  "name": "@precog/nuxt-devtools-client",
+  "name": "precog-nuxt-devtools-client",
   "private": true,
   "type": "module"
 }

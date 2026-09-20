@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { PrecogProvider, PrecogOverlay } from "@precog/next";
+import { PrecogProvider, PrecogOverlay } from "precog-next";
 import "./globals.css";
 
 export const metadata = { title: "precog for Next" };

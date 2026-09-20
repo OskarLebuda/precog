@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDevtoolsClient } from "@nuxt/devtools-kit/iframe-client";
 import type { MetricsSummary, PrecogPlan, PrecogTrigger } from "../src/module";
-import type { Precog } from "@precog/core/client";
+import type { Precog } from "precog-core/client";
 
 interface Entry {
   at: number;

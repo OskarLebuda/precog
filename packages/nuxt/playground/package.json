@@ -8,7 +8,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "@precog/nuxt": "workspace:*"
+    "precog-nuxt": "workspace:*"
   },
   "devDependencies": {
     "nuxt": "^4.5.2"

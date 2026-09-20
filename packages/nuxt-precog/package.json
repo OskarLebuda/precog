@@ -1,7 +1,7 @@
 {
   "name": "nuxt-precog",
   "version": "0.3.0",
-  "description": "Renamed to @precog/nuxt. This package re-exports it so existing installs keep working.",
+  "description": "Renamed to precog-nuxt. This package re-exports it so existing installs keep working.",
   "keywords": [
     "deprecated",
     "nuxt",
@@ -35,6 +35,6 @@
     "typecheck": "exit 0"
   },
   "dependencies": {
-    "@precog/nuxt": "workspace:*"
+    "precog-nuxt": "workspace:*"
   }
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import type { Precog } from "@precog/core/client";
-import type { MetricsSummary } from "@precog/core/client";
-import type { PrecogPlan } from "@precog/core";
+import type { Precog } from "precog-core/client";
+import type { MetricsSummary } from "precog-core/client";
+import type { PrecogPlan } from "precog-core";
 
 const props = defineProps<{
   precog: Precog;

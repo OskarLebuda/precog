@@ -1,5 +1,5 @@
-import type { PrecogPlan } from "@precog/core";
-import type { MetricsSummary, Precog, PrecogTrigger } from "@precog/core/client";
+import type { PrecogPlan } from "precog-core";
+import type { MetricsSummary, Precog, PrecogTrigger } from "precog-core/client";
 
 declare module "#app" {
   interface NuxtApp {

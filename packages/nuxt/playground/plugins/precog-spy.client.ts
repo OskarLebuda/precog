@@ -4,7 +4,7 @@
  */
 export default defineNuxtPlugin({
   name: "playground:spy",
-  dependsOn: ["@precog/nuxt"],
+  dependsOn: ["precog-nuxt"],
   setup(nuxtApp) {
     const spy = window as unknown as { __precogPlan?: unknown; __precog?: unknown };
     spy.__precog = nuxtApp.$precog;

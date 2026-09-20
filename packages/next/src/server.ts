@@ -3,7 +3,7 @@
  *
  * ```ts
  * // app/api/precog/route.ts
- * import { createPrecogHandler } from "@precog/next/server";
+ * import { createPrecogHandler } from "precog-next/server";
  *
  * export const POST = createPrecogHandler();
  * ```
@@ -22,8 +22,8 @@ import {
   type PredictStorage,
   type PredictedHookContext,
   type PredictHookContext,
-} from "@precog/core/server";
-import type { PrecogPrediction } from "@precog/core";
+} from "precog-core/server";
+import type { PrecogPrediction } from "precog-core";
 import { defaults } from "./options";
 
 /** A prediction state never needs more than this. Anything larger is not from our client. */

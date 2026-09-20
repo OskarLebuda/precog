@@ -11,9 +11,9 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Precog, PredictionFailed } from "@precog/core/client";
-import type { MetricsSummary } from "@precog/core/client";
-import type { PrecogPlan, PrecogPrediction, PrecogState } from "@precog/core";
+import { Precog, PredictionFailed } from "precog-core/client";
+import type { MetricsSummary } from "precog-core/client";
+import type { PrecogPlan, PrecogPrediction, PrecogState } from "precog-core";
 import { withDefaults, type PrecogOptions } from "./options";
 
 export interface PrecogContextValue {

@@ -5,14 +5,14 @@ import {
   useRouter,
   useRuntimeConfig,
 } from "#app";
-import type { PrecogPrediction, PrecogPublicOptions } from "@precog/core";
-import { Precog, PredictionFailed } from "@precog/core/client";
+import type { PrecogPrediction, PrecogPublicOptions } from "precog-core";
+import { Precog, PredictionFailed } from "precog-core/client";
 
 /** `?precog=off` turns the module off for a side-by-side recording. */
 const OFF = "off";
 
 export default defineNuxtPlugin({
-  name: "@precog/nuxt",
+  name: "precog-nuxt",
   setup(nuxtApp) {
     const options = useRuntimeConfig().public.precog as PrecogPublicOptions | undefined;
     if (!options?.enabled) return;
