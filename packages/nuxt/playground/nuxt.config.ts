@@ -1,7 +1,7 @@
 import { DOC_SLUGS } from "./shared/docs";
 
 export default defineNuxtConfig({
-  modules: ["precog-nuxt"],
+  modules: ["nuxt-precog"],
   devServer: { port: 3003 },
   devtools: {
     enabled: true,

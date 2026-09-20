@@ -1,5 +1,5 @@
 {
-  "name": "precog-nuxt-playground",
+  "name": "nuxt-precog-playground",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "precog-nuxt": "workspace:*"
+    "nuxt-precog": "workspace:*"
   },
   "devDependencies": {
     "nuxt": "^4.5.2"

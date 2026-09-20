@@ -1,5 +1,5 @@
 /**
- * The Next.js App Router adapter. The route handler lives in `precog-next/server`, because it
+ * The Next.js App Router adapter. The route handler lives in `next-precog/server`, because it
  * must never be pulled into a client bundle.
  */
 

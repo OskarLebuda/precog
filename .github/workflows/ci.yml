@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ["precog-nuxt", "precog-next"]
+        package: ["nuxt-precog", "next-precog"]
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4

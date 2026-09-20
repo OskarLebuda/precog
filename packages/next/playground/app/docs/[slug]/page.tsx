@@ -1,4 +1,4 @@
-import { PrecogLink as Link } from "precog-next";
+import { PrecogLink as Link } from "next-precog";
 import { DOC_SLUGS, docBody, docTitle } from "../../docs";
 
 export function generateStaticParams() {

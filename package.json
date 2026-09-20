@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
-    "dev": "pnpm --filter precog-nuxt dev",
-    "dev:prepare": "pnpm --filter precog-core build && pnpm --filter precog-nuxt dev:prepare",
+    "dev": "pnpm --filter nuxt-precog dev",
+    "dev:prepare": "pnpm --filter precog-core build && pnpm --filter nuxt-precog dev:prepare",
     "fmt": "oxlint . --fix && oxfmt .",
     "lint": "oxlint . && oxfmt --check .",
     "test": "vitest run",

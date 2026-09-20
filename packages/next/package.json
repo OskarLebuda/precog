@@ -1,5 +1,5 @@
 {
-  "name": "precog-next",
+  "name": "next-precog",
   "version": "0.3.0",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev for the Next.js App Router.",
   "keywords": [
@@ -37,7 +37,7 @@
     "build": "obuild && node scripts/use-client.mjs",
     "prepack": "pnpm build",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "pnpm build && pnpm --filter precog-next-playground build && playwright test"
+    "test:e2e": "pnpm build && pnpm --filter next-precog-playground build && playwright test"
   },
   "dependencies": {
     "precog-core": "workspace:*"

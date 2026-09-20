@@ -111,7 +111,7 @@ const defaults: ModuleOptions = {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: "precog-nuxt",
+    name: "nuxt-precog",
     configKey: "precog",
     compatibility: { nuxt: ">=3.13.0" },
   },

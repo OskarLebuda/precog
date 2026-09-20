@@ -39,7 +39,7 @@ jobs:
       - name: Publish every package whose version is new
         run: |
           set -euo pipefail
-          for pkg in core nuxt next nuxt-precog; do
+          for pkg in core nuxt next; do
             dir="packages/$pkg"
             name=$(node -p "require('./$dir/package.json').name")
             version=$(node -p "require('./$dir/package.json').version")

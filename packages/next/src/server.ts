@@ -3,7 +3,7 @@
  *
  * ```ts
  * // app/api/precog/route.ts
- * import { createPrecogHandler } from "precog-next/server";
+ * import { createPrecogHandler } from "next-precog/server";
  *
  * export const POST = createPrecogHandler();
  * ```

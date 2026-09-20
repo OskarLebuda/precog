@@ -403,16 +403,16 @@ minus its HTTP wrapper. That was 1933 lines already free of Nuxt, Vue and h3 imp
 the orchestrator was written with its dependencies injected. Splitting it was moving files, not
 rewriting them.
 
-`precog-nuxt` and `precog-next` are what is left: a Nuxt module and a Next route handler plus
+`nuxt-precog` and `next-precog` are what is left: a Nuxt module and a Next route handler plus
 provider. Each is a few hundred lines.
 
 One leak had to be plugged on the way: `takeOverNuxtLinkPrefetch` sat in the shared options
-type, so `precog-core` knew about `NuxtLink` and `precog-next` had to carry a field it can
+type, so `precog-core` knew about `NuxtLink` and `next-precog` had to carry a field it can
 never use. It is a build-time Nuxt option and now lives only there.
 
 ## `"use client"` does not survive bundling
 
-The bundler dropped the directive from `precog-next`'s client entry, and nothing failed. Next
+The bundler dropped the directive from `next-precog`'s client entry, and nothing failed. Next
 would have treated `PrecogProvider` as a server component and thrown on the first hook, in
 every app that installed it.
 
@@ -430,7 +430,7 @@ than reading it.
 Nuxt has `experimental.defaults.nuxtLink.prefetchOn`, which is how `takeOverNuxtLinkPrefetch`
 hands the decision to precog. Next has no equivalent: `prefetch` is a prop on each `<Link>`.
 
-So `precog-next` exports `PrecogLink`, which is `next/link` with `prefetch={false}`. Swapping
+So `next-precog` exports `PrecogLink`, which is `next/link` with `prefetch={false}`. Swapping
 the import is the one manual step, and without it precog has nothing to narrow: the e2e suite
 asserts that a docs page with twelve links warms at most four routes, and that assertion only
 passes because the playground uses `PrecogLink`.
@@ -503,8 +503,8 @@ The v0.2.0 tag failed with `404 Not Found - PUT https://registry.npmjs.org/nuxt-
 reads like a missing package but is how the registry reports an unauthorised publish. 0.2.0 went
 out by hand, and the workflow kept looking correct because nothing retried it.
 
-npm will not attach a trusted publisher to a package that does not exist yet, so the three
-scoped packages cannot be covered before their first publish. That first publish is manual; the
+npm will not attach a trusted publisher to a package that does not exist yet, so `precog-core`
+and `next-precog` cannot be covered before their first publish. That first publish is manual; the
 tag-driven workflow only takes over from the second one.
 
 ## The `@precog` scope belongs to somebody else
@@ -522,6 +522,8 @@ The reliable check is `registry.npmjs.org/<name>` returning 404 for a free name;
 `npmjs.com/org/<name>` page answers 403 for everyone not signed in, including for names that do
 not exist, so it measures nothing.
 
-The packages are now unscoped: `precog-core`, `precog-nuxt`, `precog-next`, alongside the
-existing `nuxt-precog` stub. All four names were verified free against the registry before the
-rename, which is the check that should have happened first.
+The packages are now unscoped, and `nuxt-precog` simply keeps the name it already had on npm:
+`precog-core`, `nuxt-precog`, `next-precog`. That also deletes the forwarding stub the scoped
+naming had needed, and with it the deprecation warning an existing install would have seen.
+`next-precog` and `precog-core` were verified free against the registry before the rename,
+which is the check that should have happened first.
