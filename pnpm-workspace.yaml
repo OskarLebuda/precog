@@ -1,6 +1,7 @@
 packages:
   - packages/*
   - packages/nuxt/playground
+  - packages/next/playground
   - bench
   - docs
 

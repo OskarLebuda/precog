@@ -136,7 +136,6 @@ export default defineNuxtModule<ModuleOptions>({
       exclude: options.exclude,
       privacy: options.privacy,
       overlay,
-      takeOverNuxtLinkPrefetch: options.takeOverNuxtLinkPrefetch,
       documentNavigation: options.documentNavigation,
       ...(options.pricing ? { pricing: options.pricing } : {}),
     };

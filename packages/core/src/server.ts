@@ -19,4 +19,5 @@ export { RateLimiter, take } from "./server/ratelimit";
 export type { Bucket, Limit } from "./server/ratelimit";
 export { buildQuestions, sanitize, toOptions, NONE, SOON_LEVELS } from "./server/questions";
 export type { PrecogQuestions } from "./server/questions";
+export { createMemoryStorage } from "./server/memory";
 export { readEnv } from "./server/env";

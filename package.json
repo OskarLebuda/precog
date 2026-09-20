@@ -12,7 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest dev",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "pnpm --filter @precog/nuxt test:e2e",
+    "test:e2e": "pnpm -r --filter './packages/*' test:e2e",
     "typecheck": "pnpm -r --filter './packages/*' typecheck",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
     "bench": "node bench/run.mjs",
