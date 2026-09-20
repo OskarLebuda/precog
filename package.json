@@ -1,10 +1,10 @@
 {
   "name": "precog-monorepo",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm -r --filter './packages/*' build",
+    "build": "node scripts/sync-readme.mjs && pnpm -r --filter './packages/*' build",
     "dev": "pnpm --filter nuxt-precog dev",
     "dev:prepare": "pnpm --filter precog-core build && pnpm --filter nuxt-precog dev:prepare",
     "fmt": "oxlint . --fix && oxfmt .",

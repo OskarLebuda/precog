@@ -1,6 +1,6 @@
 {
   "name": "next-precog",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev for the Next.js App Router.",
   "keywords": [
     "jev",

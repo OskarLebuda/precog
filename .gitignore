@@ -25,3 +25,6 @@ test-results
 playwright-report
 bench/results/*
 !bench/results/bench.md
+
+# Copied from the root at build time by scripts/sync-readme.mjs.
+packages/*/README.md

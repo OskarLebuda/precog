@@ -1,6 +1,6 @@
 {
   "name": "nuxt-precog",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
   "keywords": [
     "jev",

@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.1
+
+Every package now ships the README. npm reads it out of the tarball and nowhere else, so 0.3.0
+landed with an empty page on all three. Relative links are rewritten to absolute GitHub URLs on
+the way in, because npm resolves them against `repository.directory` and would have looked for
+the banner inside the package.
+
 ## v0.3.0
 
 precog is no longer Nuxt only. The module was split into a framework-free core and one adapter

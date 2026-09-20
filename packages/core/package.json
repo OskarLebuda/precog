@@ -1,6 +1,6 @@
 {
   "name": "precog-core",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Framework-free heart of precog: candidates, policy, speculation rules and the prediction endpoint.",
   "homepage": "https://precog.oskarlebuda.dev",
   "license": "MIT",
