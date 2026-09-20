@@ -5,8 +5,8 @@ import type { PrecogPlan, PrecogPublicOptions } from "@precog/core";
 import type { MetricsSummary, Precog } from "@precog/core/client";
 
 export default defineNuxtPlugin({
-  name: "nuxt-precog:overlay",
-  dependsOn: ["nuxt-precog"],
+  name: "@precog/nuxt:overlay",
+  dependsOn: ["@precog/nuxt"],
   setup(nuxtApp) {
     const options = useRuntimeConfig().public.precog as PrecogPublicOptions | undefined;
     const precog = nuxtApp.$precog as Precog | undefined;

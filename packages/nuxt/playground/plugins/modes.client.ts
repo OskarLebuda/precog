@@ -5,7 +5,7 @@
  */
 export default defineNuxtPlugin({
   name: "playground:modes",
-  dependsOn: ["nuxt-precog"],
+  dependsOn: ["@precog/nuxt"],
   setup() {
     const mode = useCookie<string>("precog_mode", { default: () => "precog" });
     const fromQuery = new URLSearchParams(location.search).get("mode");

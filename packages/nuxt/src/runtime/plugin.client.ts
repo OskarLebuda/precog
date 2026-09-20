@@ -12,7 +12,7 @@ import { Precog, PredictionFailed } from "@precog/core/client";
 const OFF = "off";
 
 export default defineNuxtPlugin({
-  name: "nuxt-precog",
+  name: "@precog/nuxt",
   setup(nuxtApp) {
     const options = useRuntimeConfig().public.precog as PrecogPublicOptions | undefined;
     if (!options?.enabled) return;

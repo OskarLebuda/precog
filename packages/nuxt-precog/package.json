@@ -1,0 +1,40 @@
+{
+  "name": "nuxt-precog",
+  "version": "0.3.0",
+  "description": "Renamed to @precog/nuxt. This package re-exports it so existing installs keep working.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "directory": "packages/nuxt-precog"
+  },
+  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "deprecated"
+  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/module.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
+  "main": "./dist/module.mjs",
+  "types": "./dist/module.d.mts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "mkdir -p dist && cp src/module.mjs dist/module.mjs && cp src/module.d.mts dist/module.d.mts",
+    "prepack": "pnpm build",
+    "typecheck": "exit 0"
+  },
+  "dependencies": {
+    "@precog/nuxt": "workspace:*"
+  }
+}
