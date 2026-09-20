@@ -1,7 +1,7 @@
 "use client";
 
-import type { MetricsSummary } from "@precog/core/client";
-import type { PrecogPlan } from "@precog/core";
+import type { MetricsSummary } from "precog-core/client";
+import type { PrecogPlan } from "precog-core";
 import { usePrecogContext } from "./provider";
 
 export interface UsePrecog {

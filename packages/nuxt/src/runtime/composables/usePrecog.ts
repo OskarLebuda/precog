@@ -1,5 +1,5 @@
 import { useNuxtApp } from "#app";
-import type { Precog } from "@precog/core/client";
+import type { Precog } from "precog-core/client";
 
 export interface UsePrecog {
   /** False while paused, or before consent when `privacy.requireConsent` is on. */

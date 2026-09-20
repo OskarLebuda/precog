@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: ["@precog/nuxt", "@precog/next"]
+        package: ["precog-nuxt", "precog-next"]
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
@@ -39,7 +39,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chrome
       # Both adapters build on the core package, so it has to exist first.
-      - run: pnpm --filter @precog/core build
+      - run: pnpm --filter precog-core build
       - run: pnpm --filter ${{ matrix.package }} test:e2e
       - uses: actions/upload-artifact@v4
         if: failure()

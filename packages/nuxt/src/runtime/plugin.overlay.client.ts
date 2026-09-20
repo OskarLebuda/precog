@@ -1,12 +1,12 @@
 import { defineNuxtPlugin, useRuntimeConfig } from "#app";
 import { createApp, h, shallowRef } from "vue";
 import PrecogOverlay from "./components/PrecogOverlay.vue";
-import type { PrecogPlan, PrecogPublicOptions } from "@precog/core";
-import type { MetricsSummary, Precog } from "@precog/core/client";
+import type { PrecogPlan, PrecogPublicOptions } from "precog-core";
+import type { MetricsSummary, Precog } from "precog-core/client";
 
 export default defineNuxtPlugin({
-  name: "@precog/nuxt:overlay",
-  dependsOn: ["@precog/nuxt"],
+  name: "precog-nuxt:overlay",
+  dependsOn: ["precog-nuxt"],
   setup(nuxtApp) {
     const options = useRuntimeConfig().public.precog as PrecogPublicOptions | undefined;
     const precog = nuxtApp.$precog as Precog | undefined;

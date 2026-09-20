@@ -1,5 +1,5 @@
 {
-  "name": "@precog/core",
+  "name": "precog-core",
   "version": "0.3.0",
   "description": "Framework-free heart of precog: candidates, policy, speculation rules and the prediction endpoint.",
   "homepage": "https://precog.oskarlebuda.dev",

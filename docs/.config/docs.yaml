@@ -9,7 +9,7 @@ url: "https://precog.oskarlebuda.dev"
 # `neutral` keeps the whole interface black and white.
 themeColor: "#171717"
 landing:
-  heroCode: "npm install @precog/nuxt   # or @precog/next"
+  heroCode: "npm install precog-nuxt   # or precog-next"
   contributors: true
   features:
     - title: "One request, three questions"

@@ -1,4 +1,4 @@
-import type { PredictHookContext, PredictedHookContext } from "@precog/core/server";
+import type { PredictHookContext, PredictedHookContext } from "precog-core/server";
 
 declare module "nitropack/types" {
   interface NitroRuntimeHooks {

@@ -6,7 +6,7 @@ import { join } from "node:path";
 const OUTPUT = "packages/nuxt/playground/.output";
 const NEEDLES = ["precog-hud", "precog-badge", "nuxt-precog:overlay"];
 
-execFileSync("pnpm", ["--filter", "@precog/nuxt", "exec", "nuxt", "build", "playground"], {
+execFileSync("pnpm", ["--filter", "precog-nuxt", "exec", "nuxt", "build", "playground"], {
   stdio: "inherit",
   env: { ...process.env, PRECOG_OVERLAY: "dev", NODE_ENV: "production" },
 });

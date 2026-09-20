@@ -7,11 +7,11 @@ per framework, so the same prediction loop now runs on Next.js.
 
 ### Packages
 
-- `@precog/core` holds everything that never needed a framework: candidates, policy, speculation
+- `precog-core` holds everything that never needed a framework: candidates, policy, speculation
   rules, and the prediction endpoint that talks to Jev.
-- `@precog/nuxt` is the Nuxt module, unchanged in behaviour.
-- `@precog/next` is new, for the App Router.
-- `nuxt-precog` is now a stub that forwards to `@precog/nuxt`. Nothing breaks if you stay on it,
+- `precog-nuxt` is the Nuxt module, unchanged in behaviour.
+- `precog-next` is new, for the App Router.
+- `nuxt-precog` is now a stub that forwards to `precog-nuxt`. Nothing breaks if you stay on it,
   but move when convenient.
 
 ### Next.js

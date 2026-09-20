@@ -1,5 +1,5 @@
 {
-  "name": "@precog/nuxt",
+  "name": "precog-nuxt",
   "version": "0.3.0",
   "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
   "keywords": [
@@ -50,8 +50,8 @@
   "dependencies": {
     "@nuxt/devtools-kit": "^3.4.2",
     "@nuxt/kit": "^4.5.2",
-    "@precog/core": "workspace:*",
     "defu": "^6.1.4",
+    "precog-core": "workspace:*",
     "sirv": "^3.0.2"
   },
   "devDependencies": {

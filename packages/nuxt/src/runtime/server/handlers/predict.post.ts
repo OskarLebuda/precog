@@ -7,14 +7,14 @@ import {
   setResponseStatus,
 } from "h3";
 import { useNitroApp, useRuntimeConfig, useStorage } from "nitropack/runtime";
-import type { PrecogBudget, PrecogPrediction, PrecogPrivacy } from "@precog/core";
-import { RateLimiter, isSameSite, readEnv, validateState } from "@precog/core/server";
+import type { PrecogBudget, PrecogPrediction, PrecogPrivacy } from "precog-core";
+import { RateLimiter, isSameSite, readEnv, validateState } from "precog-core/server";
 import {
   runPrediction,
   type PredictedHookContext,
   type PredictHookContext,
   type PredictStorage,
-} from "@precog/core/server";
+} from "precog-core/server";
 
 /** A prediction state never needs more than this. Anything larger is not from our client. */
 const MAX_BODY_BYTES = 16 * 1024;

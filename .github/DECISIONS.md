@@ -397,22 +397,22 @@ alone. The symptom is a 401 with a key that demonstrably works when read from th
 
 ## One workspace, three packages
 
-`@precog/core` holds everything that never knew which framework it was in: candidates, signals,
+`precog-core` holds everything that never knew which framework it was in: candidates, signals,
 the policy, the speculation rules, the telemetry, the orchestrator, and the prediction endpoint
 minus its HTTP wrapper. That was 1933 lines already free of Nuxt, Vue and h3 imports, because
 the orchestrator was written with its dependencies injected. Splitting it was moving files, not
 rewriting them.
 
-`@precog/nuxt` and `@precog/next` are what is left: a Nuxt module and a Next route handler plus
+`precog-nuxt` and `precog-next` are what is left: a Nuxt module and a Next route handler plus
 provider. Each is a few hundred lines.
 
 One leak had to be plugged on the way: `takeOverNuxtLinkPrefetch` sat in the shared options
-type, so `@precog/core` knew about `NuxtLink` and `@precog/next` had to carry a field it can
+type, so `precog-core` knew about `NuxtLink` and `precog-next` had to carry a field it can
 never use. It is a build-time Nuxt option and now lives only there.
 
 ## `"use client"` does not survive bundling
 
-The bundler dropped the directive from `@precog/next`'s client entry, and nothing failed. Next
+The bundler dropped the directive from `precog-next`'s client entry, and nothing failed. Next
 would have treated `PrecogProvider` as a server component and thrown on the first hook, in
 every app that installed it.
 
@@ -430,7 +430,7 @@ than reading it.
 Nuxt has `experimental.defaults.nuxtLink.prefetchOn`, which is how `takeOverNuxtLinkPrefetch`
 hands the decision to precog. Next has no equivalent: `prefetch` is a prop on each `<Link>`.
 
-So `@precog/next` exports `PrecogLink`, which is `next/link` with `prefetch={false}`. Swapping
+So `precog-next` exports `PrecogLink`, which is `next/link` with `prefetch={false}`. Swapping
 the import is the one manual step, and without it precog has nothing to narrow: the e2e suite
 asserts that a docs page with twelve links warms at most four routes, and that assertion only
 passes because the playground uses `PrecogLink`.
@@ -488,14 +488,14 @@ so a tag would have published nothing at all.
 
 Two traps sit under the rewrite:
 
-`npm publish` ships `workspace:*` verbatim. The adapters depend on `@precog/core` that way, so
+`npm publish` ships `workspace:*` verbatim. The adapters depend on `precog-core` that way, so
 publishing with npm produces a tarball whose dependency range no registry can resolve. `pnpm
 pack` rewrites it to the real version, which is why the workflow packs with pnpm and hands the
 tarball to `npm publish` rather than publishing the directory. Verified by unpacking the
 tarball and reading its manifest, not by trusting either tool.
 
-`@precog/core` had no `publishConfig.access`. A scoped package defaults to restricted, so its
-first publish would have failed on the rest of the scope being public.
+`precog-core` had no `publishConfig.access`. That mattered while the packages were scoped, and
+is only belt and braces now that they are not.
 
 ## Trusted publishing was never actually working
 
@@ -506,3 +506,22 @@ out by hand, and the workflow kept looking correct because nothing retried it.
 npm will not attach a trusted publisher to a package that does not exist yet, so the three
 scoped packages cannot be covered before their first publish. That first publish is manual; the
 tag-driven workflow only takes over from the second one.
+
+## The `@precog` scope belongs to somebody else
+
+The workspace was built and documented as `@precog/core`, `@precog/nuxt` and `@precog/next`
+without ever checking that the scope could be published to. It cannot: the npm organisation
+`precog` exists, has one owner, and that owner is a different account. Every publish returned
+`404 Not Found - PUT`, which is how the registry reports an unauthorised write rather than a
+missing package, so it read like a credential problem for three rounds of debugging: a stale
+granular token, then a web login, then a security key prompt that succeeded and still 404ed.
+
+`npm org ls precog` prints `{"precog": "owner"}`. That is a map of member to role, not a
+statement about the caller, and misreading it as "you are the owner" cost a round on its own.
+The reliable check is `registry.npmjs.org/<name>` returning 404 for a free name; the
+`npmjs.com/org/<name>` page answers 403 for everyone not signed in, including for names that do
+not exist, so it measures nothing.
+
+The packages are now unscoped: `precog-core`, `precog-nuxt`, `precog-next`, alongside the
+existing `nuxt-precog` stub. All four names were verified free against the registry before the
+rename, which is the check that should have happened first.

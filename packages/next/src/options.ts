@@ -1,6 +1,6 @@
 /** Options shared by the route handler and the provider. */
 
-import type { PrecogBudget, PrecogPrivacy, PrecogPublicOptions } from "@precog/core";
+import type { PrecogBudget, PrecogPrivacy, PrecogPublicOptions } from "precog-core";
 
 /** What the browser half needs. Everything has a default, so `<PrecogProvider />` is enough. */
 export type PrecogOptions = Partial<Omit<PrecogPublicOptions, "enabled">> & {

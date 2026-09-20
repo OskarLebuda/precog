@@ -1,4 +1,4 @@
-import { PrecogLink as Link } from "@precog/next";
+import { PrecogLink as Link } from "precog-next";
 import { DOC_SLUGS, docTitle } from "./docs";
 
 export default function Home() {

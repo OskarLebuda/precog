@@ -8,7 +8,7 @@
  * give precog something to narrow.
  *
  * ```tsx
- * import { PrecogLink as Link } from "@precog/next";
+ * import { PrecogLink as Link } from "precog-next";
  * ```
  *
  * Prefetch on hover is still Next's, and still useful: precog covers the time before the

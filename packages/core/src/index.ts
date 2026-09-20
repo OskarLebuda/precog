@@ -2,8 +2,8 @@
  * The parts that do not care which framework you use: what counts as a candidate link, what
  * the state sent to Jev looks like, and how probabilities turn into speculative loads.
  *
- * Browser-only code lives in `@precog/core/client`, and the prediction endpoint's own logic
- * in `@precog/core/server`.
+ * Browser-only code lives in `precog-core/client`, and the prediction endpoint's own logic
+ * in `precog-core/server`.
  */
 
 export { buildCandidates, fingerprint, toPath, toWire } from "./candidates";
