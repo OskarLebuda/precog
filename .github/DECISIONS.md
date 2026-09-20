@@ -307,7 +307,7 @@ exists and fails on a genuinely clean build with a mangled relative path
 convention and is resolved through the `#shared` alias, not relatively. The bug had been there
 the whole time and was invisible locally, because `playground/.nuxt` was never deleted.
 
-## The docs site is deployed under a path prefix
+## The docs site is deployed under a path prefix (superseded by the custom domain below)
 
 GitHub Pages serves this repository at `oskarlebuda.github.io/precog/`, not at a domain
 root. undocs builds asset paths from `/`, so the first deploy returned a perfectly valid
@@ -461,3 +461,20 @@ extended a generated file and undocs resolved it while building. The workspace s
 that root tsconfig, and moved `src/` into `packages/nuxt`, so the step could no longer find a
 module and failed the whole job on the first push to main after the merge. The docs build needs
 no prepare now.
+
+## A custom domain removes the path prefix, and the rename made it necessary
+
+Renaming the repository to `precog` broke every published link: GitHub does not redirect a
+Pages URL after a rename, so `oskarlebuda.github.io/nuxt-precog` is a permanent 404, including
+in the posts that announced the project. A custom domain makes the docs URL independent of the
+repository name, so the next rename costs nothing.
+
+`precog.oskarlebuda.dev` is a `CNAME` to `oskarlebuda.github.io` in Cloudflare, set to DNS only.
+Proxying it would stop GitHub validating the domain, and the certificate would never be issued.
+
+Serving from a domain root means `NUXT_APP_BASE_URL` and `scripts/fix-docs-base.mjs` both go:
+undocs' `/icon.svg` is correct again with no rewriting, which is why the script existed at all.
+
+`docs/.docs/public/CNAME` ends up in the built output on purpose. With `build_type: workflow`
+the custom domain is stored in the repository settings, but a deploy whose artifact has no
+`CNAME` can clear it, which silently takes the site off the domain.

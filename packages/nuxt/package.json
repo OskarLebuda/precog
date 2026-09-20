@@ -12,7 +12,7 @@
     "speculation-rules",
     "typesafe"
   ],
-  "homepage": "https://oskarlebuda.github.io/precog",
+  "homepage": "https://precog.oskarlebuda.dev",
   "bugs": "https://github.com/OskarLebuda/precog/issues",
   "license": "MIT",
   "repository": {

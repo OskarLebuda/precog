@@ -2,7 +2,7 @@
   "name": "@precog/core",
   "version": "0.3.0",
   "description": "Framework-free heart of precog: candidates, policy, speculation rules and the prediction endpoint.",
-  "homepage": "https://oskarlebuda.github.io/precog",
+  "homepage": "https://precog.oskarlebuda.dev",
   "license": "MIT",
   "repository": {
     "type": "git",

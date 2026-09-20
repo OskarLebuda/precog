@@ -4,7 +4,7 @@ name: "precog"
 shortDescription: "Your links, loaded before the click."
 description: "Asks TypeSafe Jev which link a visitor is about to click, then warms exactly that navigation. For Nuxt and Next.js."
 github: "OskarLebuda/precog"
-url: "https://oskarlebuda.github.io/precog"
+url: "https://precog.oskarlebuda.dev"
 # A palette name, not a hex: undocs feeds this straight to Nuxt UI as its primary colour.
 # `neutral` keeps the whole interface black and white.
 themeColor: "#171717"
