@@ -1,5 +1,7 @@
 packages:
-  - playground
+  - packages/*
+  - packages/nuxt/playground
+  - packages/next/playground
   - bench
   - docs
 
@@ -11,6 +13,3 @@ onlyBuiltDependencies:
   - "@parcel/watcher"
   - esbuild
   - vue-demi
-
-overrides:
-  nuxt-precog: link:.

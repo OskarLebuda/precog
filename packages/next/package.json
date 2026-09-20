@@ -1,0 +1,58 @@
+{
+  "name": "@precog/next",
+  "version": "0.3.0",
+  "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev for the Next.js App Router.",
+  "keywords": [
+    "jev",
+    "next",
+    "nextjs",
+    "prediction",
+    "prefetch",
+    "prerender",
+    "react",
+    "speculation-rules",
+    "typesafe"
+  ],
+  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "bugs": "https://github.com/OskarLebuda/nuxt-precog/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "directory": "packages/next"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./server": "./dist/server.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "obuild && node scripts/use-client.mjs",
+    "prepack": "pnpm build",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "pnpm build && pnpm --filter precog-next-playground build && playwright test"
+  },
+  "dependencies": {
+    "@precog/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "next": "^16.3.5",
+    "obuild": "latest",
+    "react": "^19.3.0",
+    "typescript": "~5.9.0"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "react": ">=18"
+  }
+}

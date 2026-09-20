@@ -1,0 +1,67 @@
+{
+  "name": "@precog/nuxt",
+  "version": "0.3.0",
+  "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
+  "keywords": [
+    "jev",
+    "nuxt",
+    "nuxt-module",
+    "prediction",
+    "prefetch",
+    "prerender",
+    "speculation-rules",
+    "typesafe"
+  ],
+  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
+  "bugs": "https://github.com/OskarLebuda/nuxt-precog/issues",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git",
+    "directory": "packages/nuxt"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/module.mjs",
+  "types": "./dist/types.d.mts",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.mts",
+      "import": "./dist/module.mjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "nuxt-module-build build && pnpm client:build",
+    "build": "nuxt-module-build build && pnpm client:build",
+    "dev": "pnpm dev:prepare && nuxt dev playground",
+    "dev:build": "nuxt build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && pnpm client:build && nuxt prepare client && nuxt prepare playground",
+    "client:build": "nuxt generate client",
+    "client:dev": "nuxt dev client --port 3300",
+    "typecheck": "nuxt-module-build prepare && tsc --noEmit",
+    "test:e2e": "nuxt-module-build prepare && pnpm build && nuxt build playground && pnpm dev:prepare && playwright test",
+    "check:treeshake": "node ../../scripts/check-treeshake.mjs"
+  },
+  "dependencies": {
+    "@nuxt/devtools-kit": "^3.4.2",
+    "@nuxt/kit": "^4.5.2",
+    "@precog/core": "workspace:*",
+    "defu": "^6.1.4",
+    "sirv": "^3.0.2"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^3.4.2",
+    "@nuxt/module-builder": "^1.0.3",
+    "@nuxt/schema": "^4.5.2",
+    "@playwright/test": "^1.63.0",
+    "nuxt": "^4.5.2",
+    "typescript": "~5.9.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^3.2.0"
+  }
+}

@@ -5,10 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/nuxt-precog"><img src="https://img.shields.io/npm/v/nuxt-precog?color=00DC82&labelColor=020420" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/nuxt-precog"><img src="https://img.shields.io/npm/dm/nuxt-precog?color=00DC82&labelColor=020420" alt="npm downloads"></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/nuxt-precog?color=00DC82&labelColor=020420" alt="license"></a>
-  <a href="https://nuxt.com"><img src="https://img.shields.io/badge/Nuxt-020420?logo=nuxt.js" alt="nuxt"></a>
+  <a href="https://www.npmjs.com/package/@precog/nuxt"><img src="https://img.shields.io/npm/v/@precog/nuxt?color=00DC82&labelColor=020420&label=%40precog%2Fnuxt" alt="@precog/nuxt"></a>
+  <a href="https://www.npmjs.com/package/@precog/next"><img src="https://img.shields.io/npm/v/@precog/next?color=00DC82&labelColor=020420&label=%40precog%2Fnext" alt="@precog/next"></a>
+  <a href="./LICENSE"><img src="https://img.shields.io/npm/l/@precog/nuxt?color=00DC82&labelColor=020420" alt="license"></a>
 </p>
 
 <p align="center">
@@ -17,50 +16,60 @@
 
 ---
 
-A Nuxt module that asks [TypeSafe](https://typesafe.ai/) Jev which link a visitor is about to
-click, then warms exactly that navigation with the
+Asks [TypeSafe](https://typesafe.ai/) Jev which link a visitor is about to click, then warms
+exactly that navigation with the
 [Speculation Rules API](https://developer.mozilla.org/en-US/docs/Web/API/Speculation_Rules_API)
-and Nuxt's own route preloading. It comes with an overlay that draws the probabilities on top
-of the page, so you can watch it guess.
+and your framework's own preloading. It comes with an overlay that draws the probabilities on
+top of the page, so you can watch it guess.
 
-Not a general prefetcher. `NuxtLink` already prefetches every link that enters the viewport.
+Not a general prefetcher. Nuxt and Next already prefetch every link that enters the viewport.
 This one tries to prefetch three links instead of thirty, and to start before the hover.
+
+| Package                           | For                                                           |
+| --------------------------------- | ------------------------------------------------------------- |
+| [`@precog/nuxt`](./packages/nuxt) | Nuxt 3 and 4                                                  |
+| [`@precog/next`](./packages/next) | Next.js App Router                                            |
+| [`@precog/core`](./packages/core) | the framework-free half, if you want to write another adapter |
 
 ## Quickstart
 
+**Nuxt**
+
 ```sh
-npx nuxt module add nuxt-precog
+npx nuxt module add @precog/nuxt
 ```
 
-Set a key from [console.typesafe.ai](https://console.typesafe.ai/settings/keys):
+**Next.js**, App Router:
+
+```sh
+npm install @precog/next
+```
+
+```ts
+// app/api/precog/route.ts
+import { createPrecogHandler } from "@precog/next/server";
+export const POST = createPrecogHandler();
+```
+
+```tsx
+// app/layout.tsx
+import { PrecogProvider } from "@precog/next";
+// wrap children in <PrecogProvider>
+```
+
+Either way, set a key from
+[console.typesafe.ai](https://console.typesafe.ai/settings/keys):
 
 ```sh
 # .env
 TYPESAFE_API_KEY="your-api-key"
 ```
 
-Using a [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) key instead? Name it
-`AI_GATEWAY_API_KEY` and the module routes through the gateway on its own. The two are not
-interchangeable, and a gateway key sent to TypeSafe directly answers `401`.
+A [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) key goes in `AI_GATEWAY_API_KEY`
+instead; the two are not interchangeable.
 
-That is the whole setup. The defaults prefetch at most three links and never prerender.
-Run `nuxt dev`, open a page and press <kbd>Shift</kbd>+<kbd>P</kbd> to see what it is doing.
-
-To let it prerender the top guess as well:
-
-```ts
-// nuxt.config.ts
-export default defineNuxtConfig({
-  modules: ["nuxt-precog"],
-  precog: {
-    mode: "auto",
-    takeOverNuxtLinkPrefetch: true,
-  },
-});
-```
-
-Every option, the composable and the hooks are in
-**[the documentation](https://oskarlebuda.github.io/nuxt-precog/guide/options)**.
+The full setup for each, including the one step in Next that actually matters, is in
+**[the documentation](https://oskarlebuda.github.io/nuxt-precog)**.
 
 ## What it actually buys you
 
@@ -106,10 +115,10 @@ sequenceDiagram
     B->>B: effector B, Nuxt preloading, for in-app navigations
 ```
 
-The short version of the important part: **a `NuxtLink` click is not a document navigation**,
-so speculation rules do nothing for it. That is measured in `e2e/spa-vs-document.spec.ts`. The
-in-app win comes from preloading the payload of the pages the model picked, which only exists
-for prerendered routes.
+The short version of the important part: **a client-router click is not a document
+navigation**, so speculation rules do nothing for it. That is measured in
+`packages/nuxt/e2e/spa-vs-document.spec.ts`. The in-app win comes from warming the payload of
+the pages the model picked, which only exists for routes rendered ahead of time.
 
 :mag: [The full walk-through](https://oskarlebuda.github.io/nuxt-precog/guide/how-it-works)
 
@@ -137,7 +146,7 @@ goes over the wire and how to gate it behind consent.
 
 ```sh
 pnpm install
-pnpm dev              # playground at localhost:3000, needs a key in playground/.env
+pnpm dev              # the Nuxt playground, needs a key in packages/nuxt/playground/.env
 pnpm check            # lint, typecheck, unit tests
 pnpm test:e2e         # builds everything and drives real Chrome
 pnpm bench            # writes bench/results/bench.md

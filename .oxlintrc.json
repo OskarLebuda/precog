@@ -1,7 +1,16 @@
 {
   "$schema": "https://unpkg.com/oxlint/configuration_schema.json",
   "plugins": ["unicorn", "typescript", "oxc", "vue"],
-  "ignorePatterns": ["dist", ".nuxt", ".output", "coverage", "bench/results"],
+  "ignorePatterns": [
+    "**/dist",
+    "**/.nuxt",
+    "**/.output",
+    "**/.next",
+    "**/.docs",
+    "coverage",
+    "bench/results",
+    "**/node_modules"
+  ],
   "rules": {
     "no-console": "off"
   }

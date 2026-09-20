@@ -1,4 +1,14 @@
 {
   "$schema": "https://unpkg.com/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["CHANGELOG.md", "dist", ".nuxt", ".output", "coverage", "pnpm-lock.yaml"]
+  "ignorePatterns": [
+    "CHANGELOG.md",
+    "**/dist",
+    "**/.nuxt",
+    "**/.output",
+    "**/.next",
+    "**/.docs",
+    "coverage",
+    "pnpm-lock.yaml",
+    "**/node_modules"
+  ]
 }

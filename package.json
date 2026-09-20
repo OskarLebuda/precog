@@ -1,67 +1,23 @@
 {
-  "name": "nuxt-precog",
-  "version": "0.2.0",
-  "description": "Your links, loaded before the click. Click prediction with TypeSafe Jev, wired into Speculation Rules and Nuxt preloading.",
-  "keywords": [
-    "jev",
-    "nuxt",
-    "nuxt-module",
-    "prediction",
-    "prefetch",
-    "prerender",
-    "speculation-rules",
-    "typesafe"
-  ],
-  "homepage": "https://oskarlebuda.github.io/nuxt-precog",
-  "bugs": "https://github.com/OskarLebuda/nuxt-precog/issues",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/OskarLebuda/nuxt-precog.git"
-  },
-  "files": [
-    "dist"
-  ],
+  "name": "precog-monorepo",
+  "version": "0.3.0",
+  "private": true,
   "type": "module",
-  "main": "./dist/module.mjs",
-  "types": "./dist/types.d.mts",
-  "exports": {
-    ".": {
-      "types": "./dist/types.d.mts",
-      "import": "./dist/module.mjs"
-    }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
-    "prepack": "nuxt-module-build build && pnpm client:build",
-    "build": "nuxt-module-build build && pnpm client:build",
-    "dev": "pnpm dev:prepare && nuxt dev playground",
-    "dev:build": "nuxt build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && pnpm client:build && nuxt prepare client && nuxt prepare playground",
+    "build": "pnpm -r --filter './packages/*' build",
+    "dev": "pnpm --filter @precog/nuxt dev",
+    "dev:prepare": "pnpm --filter @precog/core build && pnpm --filter @precog/nuxt dev:prepare",
     "fmt": "oxlint . --fix && oxfmt .",
     "lint": "oxlint . && oxfmt --check .",
     "test": "vitest run",
     "test:watch": "vitest dev",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "nuxt-module-build prepare && pnpm build && nuxt build playground && pnpm dev:prepare && playwright test",
-    "bench": "node bench/run.mjs",
-    "typecheck": "nuxt-module-build prepare && tsc --noEmit",
+    "test:e2e": "pnpm -r --filter './packages/*' test:e2e",
+    "typecheck": "pnpm -r --filter './packages/*' typecheck",
     "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "release": "pnpm check && pnpm build && changelogen --release && git push --follow-tags",
-    "check:treeshake": "node scripts/check-treeshake.mjs",
-    "client:build": "nuxt generate client",
-    "client:dev": "nuxt dev client --port 3300",
+    "bench": "node bench/run.mjs",
     "docs:dev": "pnpm --filter nuxt-precog-docs dev",
     "docs:build": "pnpm --filter nuxt-precog-docs build"
-  },
-  "dependencies": {
-    "@nuxt/devtools-kit": "^3.4.2",
-    "@nuxt/kit": "^4.5.2",
-    "advocaat": "^0.0.6",
-    "defu": "^6.1.4",
-    "sirv": "^3.0.2"
   },
   "devDependencies": {
     "@nuxt/devtools": "^3.4.2",
