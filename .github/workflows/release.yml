@@ -27,15 +27,27 @@ jobs:
       - run: pnpm dev:prepare
       - run: pnpm check
       - run: pnpm build
+      # Core first, so a fresh scope gets its dependency before the adapters that name it.
+      #
+      # `pnpm pack` rather than `npm publish` on the directory: the manifests depend on each
+      # other through `workspace:*`, which pnpm rewrites to the real version while packing and
+      # npm ships verbatim, producing a tarball nobody can install.
+      #
       # No NODE_AUTH_TOKEN: the OIDC id-token is the credential, and npm attaches build
-      # provenance by itself. Scripts are skipped because the build already ran above.
-      # The version check keeps a tag pushed for an already-published version from failing,
-      # which is what happens to the first release, published by hand.
-      - name: Publish when the version is new
+      # provenance by itself. Publishing an already-published version is skipped rather than
+      # failed, so a tag can cover a subset of the workspace.
+      - name: Publish every package whose version is new
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          if npm view "nuxt-precog@$VERSION" version >/dev/null 2>&1; then
-            echo "nuxt-precog@$VERSION is already on npm, nothing to publish."
-            exit 0
-          fi
-          npm publish --ignore-scripts
+          set -euo pipefail
+          for pkg in core nuxt next nuxt-precog; do
+            dir="packages/$pkg"
+            name=$(node -p "require('./$dir/package.json').name")
+            version=$(node -p "require('./$dir/package.json').version")
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version is already on npm, nothing to publish."
+              continue
+            fi
+            tarball=$(cd "$dir" && pnpm pack --pack-destination "$RUNNER_TEMP" | tail -1)
+            echo "Publishing $name@$version from $tarball"
+            npm publish "$tarball" --access public --ignore-scripts
+          done
