@@ -24,15 +24,10 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # GitHub Pages serves this repository under /precog/, so the bundled assets need
-      # that prefix or every one of them 404s and the page renders blank.
+      # The site is served from the root of precog.oskarlebuda.dev, so no base URL prefix.
+      # docs/.docs/public/CNAME rides along in the output and keeps the custom domain set,
+      # which a workflow deploy otherwise clears.
       - run: pnpm docs:build
-        env:
-          NUXT_APP_BASE_URL: /precog/
-      # undocs writes its logo and favicon from the domain root, which the base URL misses.
-      - run: node scripts/fix-docs-base.mjs
-        env:
-          NUXT_APP_BASE_URL: /precog/
       # Pages must already be enabled with "GitHub Actions" as the source. The default
       # GITHUB_TOKEN cannot create the site itself, so `enablement: true` does not help.
       - uses: actions/configure-pages@v5

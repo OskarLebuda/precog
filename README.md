@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://oskarlebuda.github.io/precog">
+  <a href="https://precog.oskarlebuda.dev">
     <img src="./.github/assets/banner.jpeg" alt="precog" width="100%">
   </a>
 </p>
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://oskarlebuda.github.io/precog"><b>Documentation</b></a>
+  <a href="https://precog.oskarlebuda.dev"><b>Documentation</b></a>
 </p>
 
 ---
@@ -69,13 +69,13 @@ A [Vercel AI Gateway](https://vercel.com/docs/ai-gateway) key goes in `AI_GATEWA
 instead; the two are not interchangeable.
 
 The full setup for each, including the one step in Next that actually matters, is in
-**[the documentation](https://oskarlebuda.github.io/precog)**.
+**[the documentation](https://precog.oskarlebuda.dev)**.
 
 ## What it actually buys you
 
 Eight scripted sessions per arm, six navigations each, real Chrome against a production build,
 throttled to 250 ms latency and 2000 kbit/s, predictions from Jev. Method in
-[the benchmark page](https://oskarlebuda.github.io/precog/guide/benchmarks); reproduce
+[the benchmark page](https://precog.oskarlebuda.dev/guide/benchmarks); reproduce
 with `pnpm bench`.
 
 | arm                   | off    | native | precog       |
@@ -120,7 +120,7 @@ navigation**, so speculation rules do nothing for it. That is measured in
 `packages/nuxt/e2e/spa-vs-document.spec.ts`. The in-app win comes from warming the payload of
 the pages the model picked, which only exists for routes rendered ahead of time.
 
-:mag: [The full walk-through](https://oskarlebuda.github.io/precog/guide/how-it-works)
+:mag: [The full walk-through](https://precog.oskarlebuda.dev/guide/how-it-works)
 
 ## Limitations
 
@@ -139,7 +139,7 @@ the pages the model picked, which only exists for routes rendered ahead of time.
 
 The module sends page context and part of a browsing path to a third party. It sends no
 identifier of any kind, no full URLs, and never the API key.
-[The privacy page](https://oskarlebuda.github.io/precog/guide/privacy) lists exactly what
+[The privacy page](https://precog.oskarlebuda.dev/guide/privacy) lists exactly what
 goes over the wire and how to gate it behind consent.
 
 ## Development

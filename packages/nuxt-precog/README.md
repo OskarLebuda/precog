@@ -11,4 +11,4 @@ npx nuxt module remove nuxt-precog
 npx nuxt module add @precog/nuxt
 ```
 
-Documentation: <https://oskarlebuda.github.io/precog>
+Documentation: <https://precog.oskarlebuda.dev>
